@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/UAP/Examples/Menu Navigation/MainMenu.unity
+    path: Packages/com.metalpopgames.uiaccessibility/Samples/MenuNavigation/MainMenu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}
