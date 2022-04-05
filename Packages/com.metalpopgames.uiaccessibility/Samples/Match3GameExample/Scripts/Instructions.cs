@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using UnityEngine;
-using UAP.Core;
+﻿using UnityEngine;
 
-public class instructions : MonoBehaviour
+public class Instructions : MonoBehaviour
 {
 	//////////////////////////////////////////////////////////////////////////
 

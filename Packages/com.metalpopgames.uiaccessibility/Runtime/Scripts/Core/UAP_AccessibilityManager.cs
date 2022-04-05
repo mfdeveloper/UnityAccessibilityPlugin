@@ -108,14 +108,6 @@ namespace UAP
 
 		[Header("WebGL")]
 		public bool m_WebGLTTS = true;
-		/// <summary>
-		/// Google Cloud Text-To-Speech API key. Please see documentation for step-by-step instructions on how to get this value
-		/// </summary>
-		public string m_GoogleTTSAPIKey = "";
-		static public string GoogleTTSAPIKey
-		{
-			get { if (instance == null) return ""; return instance.m_GoogleTTSAPIKey; }
-		}
 
 		[Header("Windows")]
 		public bool m_WindowsTTS = true;
@@ -211,6 +203,7 @@ namespace UAP
 		//////////////////////////////////////////////////////////////////////////
 
 		private UAP_AudioQueue m_AudioQueue = null;
+		private Google_TTS m_GoogleTTS = null;
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -336,6 +329,9 @@ namespace UAP
 				return;
 			}
 
+			// Find any gameObject with "Google_TTS" script in the current scene
+			m_GoogleTTS = FindObjectOfType<Google_TTS>(true);
+
 			instance = this;
 		}
 
@@ -388,7 +384,7 @@ namespace UAP
 			{
 				GameObject newAudioQueue = new GameObject("Audio Queue");
 				instance.m_AudioQueue = newAudioQueue.AddComponent<UAP_AudioQueue>();
-				instance.m_AudioQueue.Initialize();
+				instance.m_AudioQueue.Initialize(instance.m_GoogleTTS);
 				newAudioQueue.transform.SetParent(instance.transform, false);
 			}
 

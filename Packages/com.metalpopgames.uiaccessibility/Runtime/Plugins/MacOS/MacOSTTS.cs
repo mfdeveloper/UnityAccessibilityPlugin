@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 
 #if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
 using System.Diagnostics;
@@ -9,18 +8,20 @@ using UnityEngine;
 
 namespace UAP
 {
-	public class MacOSTTS : MonoBehaviour
+    public class MacOSTTS : MonoBehaviour
 	{
 		public static MacOSTTS instance = null;
 		bool m_IsSpeaking = false;
 
+		protected int m_SpeechRate = 50;
+
 	#if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
 		Process m_VoiceProcess = null;
-	#endif
+#endif
 
-		//////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////
 
-		void Start()
+        void Start()
 		{
 			if (instance == null)
 			{
@@ -35,6 +36,8 @@ namespace UAP
 				DestroyImmediate(gameObject);
 				return;
 			}
+
+			m_SpeechRate = PlayerPrefs.GetInt("Accessibility_Speech_Rate", m_SpeechRate);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -48,7 +51,7 @@ namespace UAP
 
 	#if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
 			m_IsSpeaking = true;
-			StartCoroutine("SpeakText", msg);
+			StartCoroutine(SpeakText(msg));
 	#endif
 		}
 
@@ -57,10 +60,10 @@ namespace UAP
 	#if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
 			// Replace quotation marks
 			textToSpeak = textToSpeak.Replace('"', '\'');
-			int speechRate = (int)((UAP_AccessibilityManager.GetSpeechRate() / 100.0f) * 175 * 2);
+			int speechRate = (int)((m_SpeechRate / 100.0f) * 175 * 2);
 			string parameters = "-r " + speechRate + " " + '"' + textToSpeak + '"';
 
-			m_VoiceProcess = new System.Diagnostics.Process();
+			m_VoiceProcess = new Process();
 			m_VoiceProcess.StartInfo.FileName = "say";
 			m_VoiceProcess.StartInfo.Arguments = parameters;
 			m_VoiceProcess.StartInfo.CreateNoWindow = true;
@@ -88,7 +91,7 @@ namespace UAP
 		//////////////////////////////////////////////////////////////////////////
 
 	#if (UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX)
-		private void WaitForVoiceToFinish(System.Diagnostics.Process process)
+		private void WaitForVoiceToFinish(Process process)
 		{
 			try
 			{

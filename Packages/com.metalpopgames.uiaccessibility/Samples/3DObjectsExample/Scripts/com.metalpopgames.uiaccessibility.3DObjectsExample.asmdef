@@ -1,7 +1,9 @@
 {
-    "name": "com.metalpopgames.uiaccessibility.Windows",
-    "rootNamespace": "UAP",
-    "references": [],
+    "name": "com.metalpopgames.uiaccessibility.3DjbectsExample",
+    "rootNamespace": "",
+    "references": [
+        "GUID:cd1bd8a20a6cab242a727c6bcc62d7ee"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

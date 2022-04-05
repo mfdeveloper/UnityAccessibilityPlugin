@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UAP.Core;
+using UAP;
 
-public class gameplay : MonoBehaviour
+public class Gameplay : MonoBehaviour
 {
 	public GridLayoutGroup grid = null;
 	public AccessibleUIGroupRoot container = null;
@@ -31,11 +30,11 @@ public class gameplay : MonoBehaviour
 
 	public GameObject m_LevelGoalHighlightEffect = null;
 
-	public Sprite[] m_GemTextures = new Sprite[gridpanel.tileTypeCount];
+	public Sprite[] m_GemTextures = new Sprite[GridPanel.tileTypeCount];
 
 	private int m_CellCountX = -1;
 	private int m_CellCountY = -1;
-	private List<gridpanel> m_GridTiles = new List<gridpanel>();
+	private List<GridPanel> m_GridTiles = new List<GridPanel>();
 
 	// Base Data for size calculations
 	public bool m_MakeSquares = true;
@@ -43,7 +42,7 @@ public class gameplay : MonoBehaviour
 	private int m_BaseCellCountX = 7;
 	private int m_BaseCellCountY = 11;
 
-	static public gameplay Instance = null;
+	static public Gameplay Instance = null;
 
 	// gameplay
 	private int m_MovesLeft = 15;
@@ -56,7 +55,7 @@ public class gameplay : MonoBehaviour
 	private string m_LevelGoalsString = "";
 
 	private int m_MovesGained = 0;
-	private gridpanel m_SelectedTile = null;
+	private GridPanel m_SelectedTile = null;
 	private bool m_levelGoalUpdatedWithMove = false;
 
 	static public int DifficultyLevel = 0;
@@ -72,7 +71,7 @@ public class gameplay : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////
 
-	gameplay()
+	Gameplay()
 	{
 		Instance = this;
 	}
@@ -115,7 +114,7 @@ public class gameplay : MonoBehaviour
 		m_LevelGoals.Clear();
 		m_LevelGoals = levelGoals;
 		m_Cleared.Clear();
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 			m_Cleared.Add(0);
 
 		// Remove all that is on the board now
@@ -152,8 +151,8 @@ public class gameplay : MonoBehaviour
 		{
 			GameObject newPanel = Instantiate(prefab);
 			newPanel.transform.SetParent(transform, false);
-			newPanel.GetComponent<gridpanel>().SetIndex(i, countX);
-			m_GridTiles.Add(newPanel.GetComponent<gridpanel>());
+			newPanel.GetComponent<GridPanel>().SetIndex(i, countX);
+			m_GridTiles.Add(newPanel.GetComponent<GridPanel>());
 		}
 
 		m_SelectedTile = null;
@@ -168,7 +167,7 @@ public class gameplay : MonoBehaviour
 
 		// Insert level goal
 		int goalCount = 0;
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 		{
 			if (m_LevelGoals[i] > 0)
 			{
@@ -179,7 +178,7 @@ public class gameplay : MonoBehaviour
 		}
 		string levelGoalsString = "Level Goals: "/*m_GoalsLabel_Access.m_Text*/;
 		int counter = 0;
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 		{
 			if (m_LevelGoals[i] < 0)
 				continue;
@@ -193,7 +192,7 @@ public class gameplay : MonoBehaviour
 				levelGoalsString += "\n ";
 			if (counter == goalCount && goalCount > 1)
 				levelGoalsString += "And ";
-			levelGoalsString += m_LevelGoals[i].ToString("0") + " " + gridpanel.GetTileTypeName(i) + " gems, ";
+			levelGoalsString += m_LevelGoals[i].ToString("0") + " " + GridPanel.GetTileTypeName(i) + " gems, ";
 		}
 		levelGoalsString += "need to be destroyed.";
 
@@ -242,7 +241,7 @@ public class gameplay : MonoBehaviour
 		bool levelGoalsValid = false;
 
 		levelGoals.Clear();
-		for (int c = 0; c < gridpanel.tileTypeCount; ++c)
+		for (int c = 0; c < GridPanel.tileTypeCount; ++c)
 			levelGoals.Add(-1);
 
 		while (!levelGoalsValid)
@@ -300,8 +299,8 @@ public class gameplay : MonoBehaviour
 		{
 			m_SwapPreviewTimer -= Time.unscaledDeltaTime;
 			float scale = 1.0f - (m_SwapPreviewTimer / m_SwapPreviewDuration);
-			gridpanel tile1 = GetGridTile(m_PreviewIndex1);
-			gridpanel tile2 = GetGridTile(m_PreviewIndex2);
+			GridPanel tile1 = GetGridTile(m_PreviewIndex1);
+			GridPanel tile2 = GetGridTile(m_PreviewIndex2);
 			tile1.m_GemImage.transform.position = Vector3.Lerp(m_Previewposition1, m_Previewposition2, scale);
 			tile2.m_GemImage.transform.position = Vector3.Lerp(m_Previewposition2, m_Previewposition1, scale);
 		}
@@ -367,7 +366,7 @@ public class gameplay : MonoBehaviour
 		UAP_AccessibilityManager.Say("", false, false, UAP_AudioQueue.EInterrupt.All);
 
 		Vector2 xyCoord = ConvertIndexToXYCoordinates(index);
-		gridpanel tile = GetGridTile(index);
+		GridPanel tile = GetGridTile(index);
 
 		// Check whether this tile is already selected
 		if (tile == null || m_SelectedTile == tile)
@@ -423,7 +422,7 @@ public class gameplay : MonoBehaviour
 
 	//////////////////////////////////////////////////////////////////////////
 
-	private gridpanel GetGridTile(int index)
+	private GridPanel GetGridTile(int index)
 	{
 		if (index < 0 || index >= m_GridTiles.Count)
 			return null;
@@ -446,7 +445,7 @@ public class gameplay : MonoBehaviour
 		int goalCounter = 0;
 
 		m_LevelGoalsString = "Level Goals: \n";
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 		{
 			if (m_LevelGoals[i] < 0)
 				continue;
@@ -459,14 +458,14 @@ public class gameplay : MonoBehaviour
 				cleared = m_LevelGoals[i];
 
 			m_GoalsLabel[goalCounter].text = cleared.ToString("0") + "/" + m_LevelGoals[i].ToString("0");
-			m_GoalsLabel[goalCounter].GetComponent<UAP_BaseElement>().m_Text = gridpanel.GetTileTypeName(i) + ": " + cleared.ToString("0") + " of " + m_LevelGoals[i].ToString("0");
+			m_GoalsLabel[goalCounter].GetComponent<UAP_BaseElement>().m_Text = GridPanel.GetTileTypeName(i) + ": " + cleared.ToString("0") + " of " + m_LevelGoals[i].ToString("0");
 
 			if (cleared == m_LevelGoals[i])
 				m_GoalsCheckmarks[goalCounter].SetActive(true);
 
 			if (m_LevelGoalsString.Length > 0)
 				m_LevelGoalsString += "\n";
-			m_LevelGoalsString += gridpanel.GetTileTypeName(i) + ": " + cleared.ToString("0") + " of " + m_LevelGoals[i].ToString("0") + ". \n";
+			m_LevelGoalsString += GridPanel.GetTileTypeName(i) + ": " + cleared.ToString("0") + " of " + m_LevelGoals[i].ToString("0") + ". \n";
 
 			++goalCounter;
 
@@ -481,7 +480,7 @@ public class gameplay : MonoBehaviour
 	private int GetLevelGoalIndex(int tileType)
 	{
 		int counter = 0;
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 		{
 			if (m_LevelGoals[i] < 0)
 				continue;
@@ -663,9 +662,9 @@ public class gameplay : MonoBehaviour
 		// Check whether player has any moves left and end level if not
 		if (m_MovesLeft <= 0)
 		{
-			gameover.GameWon = false;
-			gameover.GameDuration = m_GameDuration;
-			gameover.MoveCount = m_MoveCount;
+			GameOver.GameWon = false;
+			GameOver.GameDuration = m_GameDuration;
+			GameOver.MoveCount = m_MoveCount;
 			DestroyMyself();
 			Instantiate(Resources.Load("Game Over Screen"));
 
@@ -674,7 +673,7 @@ public class gameplay : MonoBehaviour
 
 		// Check whether the level goals are completed
 		bool levelWon = true;
-		for (int i = 0; i < gridpanel.tileTypeCount; ++i)
+		for (int i = 0; i < GridPanel.tileTypeCount; ++i)
 		{
 			if (m_LevelGoals[i] < 0)
 				continue;
@@ -687,9 +686,9 @@ public class gameplay : MonoBehaviour
 		}
 		if (levelWon)
 		{
-			gameover.GameWon = true;
-			gameover.GameDuration = m_GameDuration;
-			gameover.MoveCount = m_MoveCount;
+			GameOver.GameWon = true;
+			GameOver.GameDuration = m_GameDuration;
+			GameOver.MoveCount = m_MoveCount;
 			DestroyMyself();
 			Instantiate(Resources.Load("Game Over Screen"));
 
@@ -902,8 +901,8 @@ public class gameplay : MonoBehaviour
 
 		CancelPreview();
 
-		gridpanel tile1 = GetGridTile(index1);
-		gridpanel tile2 = GetGridTile(index2);
+		GridPanel tile1 = GetGridTile(index1);
+		GridPanel tile2 = GetGridTile(index2);
 		if (tile1 == null || tile2 == null)
 			return;
 
@@ -931,8 +930,8 @@ public class gameplay : MonoBehaviour
 		//  return;
 
 		// Reset positions
-		gridpanel tile1 = GetGridTile(m_PreviewIndex1);
-		gridpanel tile2 = GetGridTile(m_PreviewIndex2);
+		GridPanel tile1 = GetGridTile(m_PreviewIndex1);
+		GridPanel tile2 = GetGridTile(m_PreviewIndex2);
 		tile1.m_GemImage.transform.position = m_Previewposition1;
 		tile2.m_GemImage.transform.position = m_Previewposition2;
 	}

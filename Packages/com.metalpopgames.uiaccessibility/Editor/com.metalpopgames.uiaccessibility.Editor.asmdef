@@ -2,7 +2,8 @@
     "name": "com.metalpopgames.uiaccessibility.Editor",
     "rootNamespace": "UAP",
     "references": [
-        "GUID:cd1bd8a20a6cab242a727c6bcc62d7ee"
+        "GUID:cd1bd8a20a6cab242a727c6bcc62d7ee",
+        "GUID:394ccc2fd4043104b9c1b3ff7df489be"
     ],
     "includePlatforms": [
         "Editor"

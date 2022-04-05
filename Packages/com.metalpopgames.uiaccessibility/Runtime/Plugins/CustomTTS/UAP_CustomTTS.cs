@@ -97,6 +97,27 @@ namespace UAP
 			DontDestroyOnLoad(newTTSGO);
 		}
 
+		public static void InitializeCustomTTS(UAP_CustomTTS customTTS)
+		{
+            if (customTTS.gameObject != null)
+            {
+				customTTS.gameObject.SetActive(true);
+            }
+
+			Instance = customTTS;
+
+			if (Instance == null)
+			{
+				Debug.LogError("[TTS] Error creating custom TTS system. " + Instance.GetType().ToString() + " is not derived from UAP_CustomTTS");
+				return;
+			}
+
+			Debug.Log("[TTS] Initializing Custom TTS");
+
+			Instance.Initialize();
+			DontDestroyOnLoad(customTTS);
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 
 		static public void Speak(string textToSay, float speakRate)

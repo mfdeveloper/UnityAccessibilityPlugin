@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UAP.Core;
+using UAP;
 
-public class pausemenu : MonoBehaviour
+public class PauseMenu : MonoBehaviour
 {
 	public Image m_SoundToggle = null;
 	public Sprite m_SoundOn = null;
@@ -34,7 +33,7 @@ public class pausemenu : MonoBehaviour
 
 	public void OnResumeButtonPressed()
 	{
-		gameplay.Instance.ResumeGame();
+		Gameplay.Instance.ResumeGame();
 		DestroyImmediate(gameObject);
 	}
 
@@ -43,7 +42,7 @@ public class pausemenu : MonoBehaviour
 	public void OnAbortGameButtonPressed()
 	{
 		DestroyImmediate(gameObject);
-		gameplay.Instance.AbortGame();
+		Gameplay.Instance.AbortGame();
 	}
 
 	//////////////////////////////////////////////////////////////////////////

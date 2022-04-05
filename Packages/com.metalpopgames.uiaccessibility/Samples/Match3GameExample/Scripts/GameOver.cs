@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UAP.Core;
+using UAP;
 
-public class gameover : MonoBehaviour
+public class GameOver : MonoBehaviour
 {
 	public GameObject m_GameLostHeading = null;
 	public GameObject m_GameWonHeading = null;
