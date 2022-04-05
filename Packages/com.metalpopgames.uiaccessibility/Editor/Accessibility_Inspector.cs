@@ -34,7 +34,6 @@ namespace UAP
 
 		// Sounds
 		static bool showSounds = false;
-		private SerializedProperty m_GoogleTTSAPIKey;
 		private SerializedProperty m_UINavigationClick;
 		private SerializedProperty m_UIInteract;
 		private SerializedProperty m_UIFocusEnter;
@@ -68,7 +67,6 @@ namespace UAP
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
 
-			m_GoogleTTSAPIKey = serializedObject.FindProperty("m_GoogleTTSAPIKey");
 			m_UINavigationClick = serializedObject.FindProperty("m_UINavigationClick");
 			m_UIInteract = serializedObject.FindProperty("m_UIInteract");
 			m_UIFocusEnter = serializedObject.FindProperty("m_UIFocusEnter");
@@ -262,19 +260,6 @@ namespace UAP
 			showSounds = DrawSectionHeader("Sounds", showSounds);
 			if (showSounds)
 			{
-				EditorGUILayout.PropertyField(m_GoogleTTSAPIKey, new GUIContent("Google TTS API key", "You can provide your Google Cloud API key to activate " +
-					"Google TTS for WebGL. The UAP documentation contains step-by-step instructions on how to get an API key.\nThis is optional - if no key is provided, " +
-					"UAP will use the browser Web Speech API to generate speech (most browsers support this)"));
-
-				// If there is nothing, or only a very short key in the text field (invalid) show some help on how to get the key
-				// The key should be 39 characters long - but it's not a hard requirement
-				if (m_GoogleTTSAPIKey.stringValue == null || m_GoogleTTSAPIKey.stringValue.Length < 39) 
-				{
-					if (GUILayout.Button("Get API Key", GUILayout.MaxWidth(120)))
-					{
-						Application.OpenURL("http://www.metalpopgames.com/assetstore/accessibility/doc/WebGL.html");
-					}
-				}
 				EditorGUILayout.PropertyField(m_UINavigationClick, new GUIContent("Navigation", "SFX when the UI element is changed"));
 				EditorGUILayout.PropertyField(m_UIInteract, new GUIContent("Interact", "SFX when a button or toggle is pressed"));
 				EditorGUILayout.PropertyField(m_UIFocusEnter, new GUIContent("Focus Enter", "SFX when an element receives exclusive focus, such as a slider"));

@@ -1,23 +1,36 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace UAP
 {
-	/// <summary>
-	/// Implementation of the Google Cloud Text-to-Speech API for use as a Custom TTS in the UAP plugin
-	/// </summary>
-	[RequireComponent(typeof(AudioSource))]
+    /// <summary>
+    /// Implementation of the Google Cloud Text-to-Speech API for use as a Custom TTS in the UAP plugin
+    /// </summary>
+    [RequireComponent(typeof(AudioSource))]
 	public class Google_TTS : UAP_CustomTTS
 	{
 		private AudioSource m_AudioPlayer = null;
 
 		UnityWebRequest m_CurrentRequest = null;
 		private bool m_IsWaitingForSynth = false;
+
+		/// <summary>
+		/// Google Cloud Text-To-Speech API key. Please see documentation for step-by-step instructions on how to get this value
+		/// </summary>
+		/// <remarks>
+		/// <b>PS:</b> This field should have be public to access from editor script
+		/// </remarks>
+		public string m_GoogleTTSAPIKey = "";
+		public string GoogleTTSAPIKey
+		{
+			get 
+			{
+				return m_GoogleTTSAPIKey;
+			}
+		}
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +57,7 @@ namespace UAP
 
 			m_IsWaitingForSynth = true;
 
-			string apiKey = UAP_AccessibilityManager.GoogleTTSAPIKey;
+			string apiKey = m_GoogleTTSAPIKey;
 
 			float speakingRate = speakRate;
 			string languageCode = "en-US";

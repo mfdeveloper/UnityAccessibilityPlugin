@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UAP.Core;
+using UAP;
 
-public class accessibilitysettings : MonoBehaviour
+public class AccessibilitySettings : MonoBehaviour
 {
 	public Toggle m_EnableAccessibility = null;
 	public Slider m_SpeechRateSlider = null;

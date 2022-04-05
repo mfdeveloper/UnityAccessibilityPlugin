@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using UAP.Core;
+using UAP;
 
-public class gridpanel : MonoBehaviour
+public class GridPanel : MonoBehaviour
 {
 	public Image m_GemImage = null;
 	public Sprite[] m_BGTexture = new Sprite[2];
@@ -192,7 +191,7 @@ public class gridpanel : MonoBehaviour
 
 		// Tell the game grid that this tile was activated
 		// The grid will take it from there
-		gameplay.Instance.ActivateTile(m_Index);
+		Gameplay.Instance.ActivateTile(m_Index);
 	}
 
 	public void OnPointerUpDelegate(PointerEventData data)
@@ -203,11 +202,11 @@ public class gridpanel : MonoBehaviour
 		if (UAP_AccessibilityManager.IsEnabled())
 			return;
 
-		gridpanel panel = (data.pointerEnter != null ? gameObject.GetComponent<gridpanel>() : null);
+		GridPanel panel = (data.pointerEnter != null ? gameObject.GetComponent<GridPanel>() : null);
 		if (panel == this && !data.dragging)
 		{
 			//Debug.Log("Pointer Up, not dragging - on same tile " + GetTileTypeName());
-			gameplay.Instance.ActivateTile(m_Index);
+			Gameplay.Instance.ActivateTile(m_Index);
 		}
 	}
 
@@ -230,9 +229,9 @@ public class gridpanel : MonoBehaviour
 
 		// Preview drag
 		if (dir != EVecDir.None)
-			gameplay.Instance.PreviewDrag(m_Index, GetNeighbourIndex(dir));
+			Gameplay.Instance.PreviewDrag(m_Index, GetNeighbourIndex(dir));
 		else
-			gameplay.Instance.CancelPreview();
+			Gameplay.Instance.CancelPreview();
 	}
 
 	public void OnDragEndDelegate(PointerEventData data)
@@ -248,11 +247,11 @@ public class gridpanel : MonoBehaviour
 
 		if (IsSameTile(data.pointerEnter))
 		{
-			gameplay.Instance.ActivateTile(m_Index);
+			Gameplay.Instance.ActivateTile(m_Index);
 			return;
 		}
 
-		gameplay.Instance.ActivateTile(GetNeighbourIndex(dir));
+		Gameplay.Instance.ActivateTile(GetNeighbourIndex(dir));
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -265,7 +264,7 @@ public class gridpanel : MonoBehaviour
 
 		if (wasDroppedOnTile)
 		{
-			gridpanel droppedOn = pointerEnter.transform.parent.gameObject.GetComponent<gridpanel>();
+			GridPanel droppedOn = pointerEnter.transform.parent.gameObject.GetComponent<GridPanel>();
 			if (droppedOn != null)
 			{
 				if (droppedOn == this)
@@ -330,7 +329,7 @@ public class gridpanel : MonoBehaviour
 
 		// Tell the game grid that this tile was activated
 		// The grid will take it from there
-		gameplay.Instance.ActivateTile(m_Index);
+		Gameplay.Instance.ActivateTile(m_Index);
 	}
 
 }

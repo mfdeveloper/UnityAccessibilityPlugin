@@ -238,7 +238,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public void Initialize()
+		public void Initialize(Google_TTS googleTTS = null)
 		{
 			m_SpeechRate = PlayerPrefs.GetInt("Accessibility_Speech_Rate", 50);
 
@@ -252,15 +252,15 @@ namespace UAP
 			// For WebGL, we need a custom TTS solution
 			// The following code makes sure that there is either a custom TTS already set up, or it tries to 
 			// initialize the included Google Cloud TTS API. This can only be done if an API key is provided.
-	#if UNITY_WEBGL
+#if UNITY_WEBGL
 			if (Application.platform == RuntimePlatform.WebGLPlayer && UAP_AccessibilityManager.UseWebGLTTS())
 			{
 				if (UAP_CustomTTS.IsInitialized() == UAP_CustomTTS.TTSInitializationState.NotInitialized)
 				{
 					// Use Google TTS if set up correctly, or internal TTS otherwise
-					if (!string.IsNullOrEmpty(UAP_AccessibilityManager.GoogleTTSAPIKey))
+					if (googleTTS != null && !string.IsNullOrEmpty(googleTTS.GoogleTTSAPIKey))
 					{
-						UAP_CustomTTS.InitializeCustomTTS<Google_TTS>();
+						UAP_CustomTTS.InitializeCustomTTS(googleTTS);
 					}
 					else
 					{
@@ -268,7 +268,7 @@ namespace UAP
 					}
 				}
 			}
-	#endif
+#endif
 			//////////////////////////////////////////////////////////////////////////
 
 			if (UAP_CustomTTS.IsInitialized() == UAP_CustomTTS.TTSInitializationState.NotInitialized)

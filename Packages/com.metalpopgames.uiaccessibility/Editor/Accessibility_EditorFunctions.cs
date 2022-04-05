@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using PackageInfo = UnityEditor.PackageManager.PackageInfo;
 #if UNITY_2018_3_OR_NEWER
 using UnityEngine.Networking;
 #endif
@@ -13,7 +12,7 @@ namespace UAP
 	[InitializeOnLoad]
 	public class Accessibility_EditorFunctions
 	{
-		static public string PluginFolder = "Assets/UAP";
+		static public PackageInfo PluginInfo = PackageInfo.FindForAssembly(typeof(Accessibility_EditorFunctions).Assembly);
 
 		static Texture2D AccessibilityIcon = null;
 		static string versionURL = "http://www.metalpopgames.com/assetstore/accessibility/UAP_Version.txt";
@@ -28,6 +27,14 @@ namespace UAP
 		static bool automaticCheck = false;
 
 		//////////////////////////////////////////////////////////////////////////
+		static public string PluginFolder
+        {
+			get
+            {
+				string pluginName = PluginInfo != null ? PluginInfo.name : "com.metalpopgames.uiaccessibility";
+				return $"Packages/{pluginName}";
+			}
+        }
 
 		static Accessibility_EditorFunctions()
 		{
@@ -49,6 +56,7 @@ namespace UAP
 
 		private static void PerformStartUpRoutine()
 		{
+
 			EditorApplication.hierarchyWindowItemOnGUI += DrawAccessibilityIcon;
 
 			// Check whether we should show the Welcome Window

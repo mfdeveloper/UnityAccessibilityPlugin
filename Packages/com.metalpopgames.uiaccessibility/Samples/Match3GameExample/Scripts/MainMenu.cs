@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using UAP.Core;
+using UAP;
 
-public class mainmenu : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
 	public Dropdown m_DifficultyDropdown = null;
 
@@ -12,8 +10,8 @@ public class mainmenu : MonoBehaviour
 
 	void Start()
 	{
-		gameplay.DifficultyLevel = PlayerPrefs.GetInt("Difficulty", 0);
-		m_DifficultyDropdown.value = gameplay.DifficultyLevel;
+		Gameplay.DifficultyLevel = PlayerPrefs.GetInt("Difficulty", 0);
+		m_DifficultyDropdown.value = Gameplay.DifficultyLevel;
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -40,8 +38,8 @@ public class mainmenu : MonoBehaviour
 
 	public void OnPlayButtonPressed()
 	{
-		gameplay.DifficultyLevel = m_DifficultyDropdown.value;
-		PlayerPrefs.SetInt("Difficulty", gameplay.DifficultyLevel);
+		Gameplay.DifficultyLevel = m_DifficultyDropdown.value;
+		PlayerPrefs.SetInt("Difficulty", Gameplay.DifficultyLevel);
 		PlayerPrefs.Save();
 		Instantiate(Resources.Load("Match3"));
 		DestroyImmediate(gameObject);
