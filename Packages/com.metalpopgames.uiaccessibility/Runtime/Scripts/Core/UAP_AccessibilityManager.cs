@@ -18,9 +18,19 @@ namespace UAP
 	[AddComponentMenu("Accessibility/Core/UAP Manager")]
 	public class UAP_AccessibilityManager : MonoBehaviour
 	{
-		//////////////////////////////////////////////////////////////////////////
-		// Version Info
-		public static string PluginVersion = "1.1.1";
+
+        #region Constants
+
+        public const float HINT_DELAY_DEFAULT = 0.6f;
+        public const float DISABLED_DELAY_DEFAULT = 0.2f;
+        public const float VALUE_DELAY_DEFAULT = 0.25f;
+        public const float TYPE_DELAY_DEFAULT = 1.0f;
+
+        #endregion
+
+        //////////////////////////////////////////////////////////////////////////
+        // Version Info
+        public static string PluginVersion = "1.1.1";
 		public static float PluginVersionAsFloat = 1.11f;
 		//////////////////////////////////////////////////////////////////////////
 
@@ -83,10 +93,10 @@ namespace UAP
 		public bool m_DebugOutput = false;
 
 		/// <value>How many seconds after selecting a UI element will the usage hint be triggered.</value>
-		float m_HintDelay = 0.6f;
-		float m_DisabledDelay = 0.2f;
-		float m_ValueDelay = 0.25f;
-		float m_TypeDelay = 1.0f;
+		public float m_HintDelay = HINT_DELAY_DEFAULT;
+        public float m_DisabledDelay = DISABLED_DELAY_DEFAULT;
+        public float m_ValueDelay = VALUE_DELAY_DEFAULT;
+        public float m_TypeDelay = TYPE_DELAY_DEFAULT;
 
 		public bool m_WindowsUseMouseSwipes = false;
 		// This setting will become obsolete
@@ -764,10 +774,10 @@ namespace UAP
 
 			UpdateElementFrame(ref element);
 
-			// Read the element
-			SpeakElement_Text(ref element);
+            // Read the element
+            SpeakElement_Text(ref element);
 
-			// This adds a pause if needed
+            // This adds a pause if needed
 			instance.ReadDisabledState();
 
 			// Read value adds a pause if needed

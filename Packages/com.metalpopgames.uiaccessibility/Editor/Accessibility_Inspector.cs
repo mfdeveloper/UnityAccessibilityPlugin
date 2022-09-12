@@ -26,8 +26,13 @@ namespace UAP
 		private SerializedProperty m_AllowVoiceOverGlobal;
 		private SerializedProperty m_AllowBuiltInVirtualKeyboard;
 
-		// Debug Testing
-		static bool showDebugging = false;
+        private SerializedProperty m_HintDelay;
+        private SerializedProperty m_DisabledDelay;
+        private SerializedProperty m_ValueDelay;
+        private SerializedProperty m_TypeDelay;
+
+        // Debug Testing
+        static bool showDebugging = false;
 		public SerializedProperty m_EditorOverride;
 		public SerializedProperty m_EditorEnabledState;
 		public SerializedProperty m_DebugOutput;
@@ -67,7 +72,12 @@ namespace UAP
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
 
-			m_UINavigationClick = serializedObject.FindProperty("m_UINavigationClick");
+            m_HintDelay = serializedObject.FindProperty("m_HintDelay");
+            m_DisabledDelay = serializedObject.FindProperty("m_DisabledDelay");
+            m_ValueDelay = serializedObject.FindProperty("m_ValueDelay");
+            m_TypeDelay = serializedObject.FindProperty("m_TypeDelay");
+
+            m_UINavigationClick = serializedObject.FindProperty("m_UINavigationClick");
 			m_UIInteract = serializedObject.FindProperty("m_UIInteract");
 			m_UIFocusEnter = serializedObject.FindProperty("m_UIFocusEnter");
 			m_UIFocusLeave = serializedObject.FindProperty("m_UIFocusLeave");
@@ -132,7 +142,6 @@ namespace UAP
 				Application.OpenURL("http://www.metalpopgames.com/assetstore/accessibility/doc");
 			}
 
-
 			// ENABLING
 			EditorGUILayout.Separator();
 			EditorGUILayout.Separator();
@@ -155,7 +164,6 @@ namespace UAP
 				EditorGUILayout.LabelField("Accessibility is currently " + (UAP_AccessibilityManager.IsEnabled() ? "ON" : "OFF"));
 				//EditorGUILayout.LabelField("Accessibility GUID " + Accessibility_Manager.GetInstanceID());
 			}
-
 
 			// TESTING
 			EditorGUILayout.Separator();
@@ -206,9 +214,7 @@ namespace UAP
 						UAP_AccessibilityManager.ToggleAccessibility();
 					}
 				}
-
 			}
-
 
 			// SETTINGS
 			EditorGUILayout.Separator();
@@ -240,7 +246,16 @@ namespace UAP
 				if (!m_AllowBuiltInVirtualKeyboard.boolValue)
 					DrawWarningBox("Attention:\nOn Android players will need to re-enable TalkBack when they want to use an edit box. Afterwards TalkBack needs to be paused again.\nOn iOS, newer Unity versions often grab the focus away from the native on-screen keybaord, making input impossible. Make sure that this is really what you want.");
 
-				if (GUILayout.Button("Reset Settings to Default"))
+                EditorGUILayout.Separator();
+
+                m_HintDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Hint delay", "Define the value delay to say the field hint"), m_HintDelay.floatValue);
+                m_DisabledDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Disabled delay", "Define the value delay to say on disabled/not interactable fields"), m_DisabledDelay.floatValue);
+                m_ValueDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Value delay", "Define the delay to explain/say the value of fields"), m_ValueDelay.floatValue);
+                m_TypeDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Type delay", "Define the delay to explain/say the type description of fields"), m_TypeDelay.floatValue);
+
+                EditorGUILayout.Separator();
+
+                if (GUILayout.Button("Reset Settings to Default"))
 				{
 					m_HandleUI.boolValue = true;
 					m_ExploreByTouch.boolValue = true;
@@ -250,9 +265,13 @@ namespace UAP
 					m_CyclicMenus.boolValue = false;
 					m_AllowVoiceOverGlobal.boolValue = true;
 					m_AllowBuiltInVirtualKeyboard.boolValue = true;
-				}
-			}
 
+                    m_HintDelay.floatValue = UAP_AccessibilityManager.HINT_DELAY_DEFAULT;
+                    m_DisabledDelay.floatValue = UAP_AccessibilityManager.DISABLED_DELAY_DEFAULT;
+                    m_ValueDelay.floatValue = UAP_AccessibilityManager.VALUE_DELAY_DEFAULT;
+                    m_TypeDelay.floatValue = UAP_AccessibilityManager.TYPE_DELAY_DEFAULT;
+                }
+			}
 
 			// SOUND EFFECTS
 			EditorGUILayout.Separator();
