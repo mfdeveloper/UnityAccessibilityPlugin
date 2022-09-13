@@ -1,3 +1,7 @@
+VERSION 1.1.2
+- Expose the global delay timers on UAP_AccessibilityManager inspector
+- Added a new field `m_SkipIfDisabled` to skip disabled elements from tts talk
+
 VERSION 1.1.1
  - Bug Fix: No voice output on windows 64 Bit Standalone
  - Support for TextMeshPro Button, DropDown and Input

@@ -48,6 +48,7 @@ namespace UAP
 		private SerializedProperty m_CustomHint;
 		private SerializedProperty m_Hint;
 		private SerializedProperty m_HintIsLocalizationKey;
+		private SerializedProperty m_SkipIfDisabled;
 
 		// Default Inspector
 		static bool allowDefaultInspector = false;
@@ -165,6 +166,8 @@ namespace UAP
 			m_CustomHint = serializedObject.FindProperty("m_CustomHint");
 			m_Hint = serializedObject.FindProperty("m_Hint");
 			m_HintIsLocalizationKey = serializedObject.FindProperty("m_HintIsLocalizationKey");
+			
+            m_SkipIfDisabled = serializedObject.FindProperty("m_SkipIfDisabled");
 
 			showSpeechOutput = DrawSectionHeader("Speech Output", showSpeechOutput);
 
@@ -187,7 +190,9 @@ namespace UAP
 					}
 					--EditorGUI.indentLevel;
 				}
-			}
+
+                EditorGUILayout.PropertyField(m_SkipIfDisabled, new GUIContent("Skip if disabled", "Jump to the next item if this field is disabled"));
+            }
 			return showSpeechOutput;
 		}
 

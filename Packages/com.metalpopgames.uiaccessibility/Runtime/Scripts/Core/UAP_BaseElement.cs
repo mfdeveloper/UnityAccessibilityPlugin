@@ -97,6 +97,8 @@ namespace UAP
 		public string m_Hint = "";
 		public bool m_HintIsLocalizationKey = false;
 
+		public bool m_SkipIfDisabled = false;
+
 		[HideInInspector]
 		public bool m_IsInsideScrollView = false;
 
