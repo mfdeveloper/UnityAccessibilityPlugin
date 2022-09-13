@@ -1,12 +1,8 @@
 {
     "name": "com.metalpopgames.uiaccessibility.Macos",
-    "rootNamespace": "",
-    "references": [
-        "GUID:958fa684fb2c07942a69eb100ce935fd"
-    ],
-    "includePlatforms": [
-        "macOSStandalone"
-    ],
+    "rootNamespace": "UAP",
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

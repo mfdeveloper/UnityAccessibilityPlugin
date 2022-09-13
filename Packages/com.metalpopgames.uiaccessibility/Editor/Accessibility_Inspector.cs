@@ -26,19 +26,20 @@ namespace UAP
 		private SerializedProperty m_AllowVoiceOverGlobal;
 		private SerializedProperty m_AllowBuiltInVirtualKeyboard;
 
-        private SerializedProperty m_HintDelay;
-        private SerializedProperty m_DisabledDelay;
-        private SerializedProperty m_ValueDelay;
-        private SerializedProperty m_TypeDelay;
+		private SerializedProperty m_HintDelay;
+		private SerializedProperty m_DisabledDelay;
+		private SerializedProperty m_ValueDelay;
+		private SerializedProperty m_TypeDelay;
 
-        // Debug Testing
-        static bool showDebugging = false;
+		// Debug Testing
+		static bool showDebugging = false;
 		public SerializedProperty m_EditorOverride;
 		public SerializedProperty m_EditorEnabledState;
 		public SerializedProperty m_DebugOutput;
 
 		// Sounds
 		static bool showSounds = false;
+		private SerializedProperty m_GoogleTTSAPIKey;
 		private SerializedProperty m_UINavigationClick;
 		private SerializedProperty m_UIInteract;
 		private SerializedProperty m_UIFocusEnter;
@@ -72,12 +73,12 @@ namespace UAP
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
 
-            m_HintDelay = serializedObject.FindProperty("m_HintDelay");
-            m_DisabledDelay = serializedObject.FindProperty("m_DisabledDelay");
-            m_ValueDelay = serializedObject.FindProperty("m_ValueDelay");
-            m_TypeDelay = serializedObject.FindProperty("m_TypeDelay");
+			m_HintDelay = serializedObject.FindProperty("m_HintDelay");
+			m_DisabledDelay = serializedObject.FindProperty("m_DisabledDelay");
+			m_ValueDelay = serializedObject.FindProperty("m_ValueDelay");
+			m_TypeDelay = serializedObject.FindProperty("m_TypeDelay");
 
-            m_UINavigationClick = serializedObject.FindProperty("m_UINavigationClick");
+			m_UINavigationClick = serializedObject.FindProperty("m_UINavigationClick");
 			m_UIInteract = serializedObject.FindProperty("m_UIInteract");
 			m_UIFocusEnter = serializedObject.FindProperty("m_UIFocusEnter");
 			m_UIFocusLeave = serializedObject.FindProperty("m_UIFocusLeave");
@@ -214,7 +215,9 @@ namespace UAP
 						UAP_AccessibilityManager.ToggleAccessibility();
 					}
 				}
+
 			}
+
 
 			// SETTINGS
 			EditorGUILayout.Separator();
@@ -246,16 +249,16 @@ namespace UAP
 				if (!m_AllowBuiltInVirtualKeyboard.boolValue)
 					DrawWarningBox("Attention:\nOn Android players will need to re-enable TalkBack when they want to use an edit box. Afterwards TalkBack needs to be paused again.\nOn iOS, newer Unity versions often grab the focus away from the native on-screen keybaord, making input impossible. Make sure that this is really what you want.");
 
-                EditorGUILayout.Separator();
+				EditorGUILayout.Separator();
 
-                m_HintDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Hint delay", "Define the value delay to say the field hint"), m_HintDelay.floatValue);
-                m_DisabledDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Disabled delay", "Define the value delay to say on disabled/not interactable fields"), m_DisabledDelay.floatValue);
-                m_ValueDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Value delay", "Define the delay to explain/say the value of fields"), m_ValueDelay.floatValue);
-                m_TypeDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Type delay", "Define the delay to explain/say the type description of fields"), m_TypeDelay.floatValue);
+				m_HintDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Hint delay", "Define the value delay to say the field hint"), m_HintDelay.floatValue);
+				m_DisabledDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Disabled delay", "Define the value delay to say on disabled/not interactable fields"), m_DisabledDelay.floatValue);
+				m_ValueDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Value delay", "Define the delay to explain/say the value of fields"), m_ValueDelay.floatValue);
+				m_TypeDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Type delay", "Define the delay to explain/say the type description of fields"), m_TypeDelay.floatValue);
 
-                EditorGUILayout.Separator();
+				EditorGUILayout.Separator();
 
-                if (GUILayout.Button("Reset Settings to Default"))
+				if (GUILayout.Button("Reset Settings to Default"))
 				{
 					m_HandleUI.boolValue = true;
 					m_ExploreByTouch.boolValue = true;
@@ -265,13 +268,9 @@ namespace UAP
 					m_CyclicMenus.boolValue = false;
 					m_AllowVoiceOverGlobal.boolValue = true;
 					m_AllowBuiltInVirtualKeyboard.boolValue = true;
-
-                    m_HintDelay.floatValue = UAP_AccessibilityManager.HINT_DELAY_DEFAULT;
-                    m_DisabledDelay.floatValue = UAP_AccessibilityManager.DISABLED_DELAY_DEFAULT;
-                    m_ValueDelay.floatValue = UAP_AccessibilityManager.VALUE_DELAY_DEFAULT;
-                    m_TypeDelay.floatValue = UAP_AccessibilityManager.TYPE_DELAY_DEFAULT;
-                }
+				}
 			}
+
 
 			// SOUND EFFECTS
 			EditorGUILayout.Separator();
@@ -279,6 +278,19 @@ namespace UAP
 			showSounds = DrawSectionHeader("Sounds", showSounds);
 			if (showSounds)
 			{
+				EditorGUILayout.PropertyField(m_GoogleTTSAPIKey, new GUIContent("Google TTS API key", "You can provide your Google Cloud API key to activate " +
+					"Google TTS for WebGL. The UAP documentation contains step-by-step instructions on how to get an API key.\nThis is optional - if no key is provided, " +
+					"UAP will use the browser Web Speech API to generate speech (most browsers support this)"));
+
+				// If there is nothing, or only a very short key in the text field (invalid) show some help on how to get the key
+				// The key should be 39 characters long - but it's not a hard requirement
+				if (m_GoogleTTSAPIKey.stringValue == null || m_GoogleTTSAPIKey.stringValue.Length < 39) 
+				{
+					if (GUILayout.Button("Get API Key", GUILayout.MaxWidth(120)))
+					{
+						Application.OpenURL("http://www.metalpopgames.com/assetstore/accessibility/doc/WebGL.html");
+					}
+				}
 				EditorGUILayout.PropertyField(m_UINavigationClick, new GUIContent("Navigation", "SFX when the UI element is changed"));
 				EditorGUILayout.PropertyField(m_UIInteract, new GUIContent("Interact", "SFX when a button or toggle is pressed"));
 				EditorGUILayout.PropertyField(m_UIFocusEnter, new GUIContent("Focus Enter", "SFX when an element receives exclusive focus, such as a slider"));

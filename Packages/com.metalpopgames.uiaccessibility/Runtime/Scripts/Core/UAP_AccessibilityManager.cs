@@ -21,6 +21,7 @@ namespace UAP
 
         #region Constants
 
+		// Default delay values
         public const float HINT_DELAY_DEFAULT = 0.6f;
         public const float DISABLED_DELAY_DEFAULT = 0.2f;
         public const float VALUE_DELAY_DEFAULT = 0.25f;
