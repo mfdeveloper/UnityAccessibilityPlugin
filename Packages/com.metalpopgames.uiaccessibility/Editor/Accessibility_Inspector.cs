@@ -249,7 +249,14 @@ namespace UAP
 				if (!m_AllowBuiltInVirtualKeyboard.boolValue)
 					DrawWarningBox("Attention:\nOn Android players will need to re-enable TalkBack when they want to use an edit box. Afterwards TalkBack needs to be paused again.\nOn iOS, newer Unity versions often grab the focus away from the native on-screen keybaord, making input impossible. Make sure that this is really what you want.");
 
-				EditorGUILayout.Separator();
+                // TODO: Move this style to "Accessibility_InspectorShared" class
+                //		 and check why isn't applyied correctly in SetupGUIStyles() method
+                var subSectionStyle = new GUIStyle(EditorStyles.boldLabel)
+				{
+					fontSize = 14
+				};
+
+				EditorGUILayout.SelectableLabel("Speech delays", subSectionStyle);
 
 				m_HintDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Hint delay", "Define the value delay to say the field hint"), m_HintDelay.floatValue);
 				m_DisabledDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Disabled delay", "Define the value delay to say on disabled/not interactable fields"), m_DisabledDelay.floatValue);
