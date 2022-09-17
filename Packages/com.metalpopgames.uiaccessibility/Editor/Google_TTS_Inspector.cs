@@ -9,7 +9,7 @@ namespace UAP
 
         private SerializedProperty m_GoogleTTSAPIKey;
 
-        static bool showConfigs = false;
+        static bool showConfigs = true;
 
         void OnEnable()
         {
