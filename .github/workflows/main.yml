@@ -21,10 +21,10 @@ jobs:
         run: ./.github/scripts/functions.sh githubActionsVariables
       - name: Check output git variables
         env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          LAST_RELEASE_TAG: ${{ steps.vars.outputs.tag }}
           COMMIT_MESSAGE: ${{ steps.vars.outputs.commit_message }}
         run: |
-          echo $RELEASE_VERSION
+          echo $LAST_RELEASE_TAG
           echo $COMMIT_MESSAGE
       - name: Checkout orphan [${{ env.PKG_BRANCH }}] branch
         run: |
@@ -37,5 +37,5 @@ jobs:
       - name: Create samples~ and ~documentation folders
         run: ./.github/scripts/functions.sh push
         env:
-          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
+          LAST_RELEASE_TAG: ${{ steps.vars.outputs.tag }}
           COMMIT_MESSAGE: ${{ steps.vars.outputs.commit_message }}

@@ -1,14 +1,13 @@
 #!/bin/bash
 
-# TODO: Use this to get the package.json version
 # USAGE: packageVersion "[PATH]/package.json"
 packageVersion() {
     local PACKAGE_JSON_FILE=$1
     VERSION=""
     while read a b ; do 
         [ "$a" = '"version":' ] && { b="${b%\"*}" ; VERSION="${b#\"}" ; break ; }
-    done < PACKAGE_JSON_FILE
-    return $VERSION
+    done < $PACKAGE_JSON_FILE
+    echo $VERSION
 }
 
 githubActionsOutputs() {
@@ -25,8 +24,13 @@ copyPackagesContent() {
 }
 
 commitAndPush() {
-    # TODO: Get version from package.json using the function packageVersion() file
-    [[ "$RELEASE_VERSION" =~ (.*[^0-9])([0-9]+)$ ]] && RELEASE_VERSION="${BASH_REMATCH[1]}$((${BASH_REMATCH[2]} + 1))";
+    # Incrementing LAST_RELEASE_TAG+1.
+    # Keep here just to store the history, and if need this to the future/others repositories
+    #
+    # PS: Keep in mind that not always you would like to increment the git tag version (e.g rewriting with force an existent git tag)
+    # [[ "$LAST_RELEASE_TAG" =~ (.*[^0-9])([0-9]+)$ ]] && LAST_RELEASE_TAG="${BASH_REMATCH[1]}$((${BASH_REMATCH[2]} + 1))";
+    
+    RELEASE_VERSION=$(packageVersion "./package.json")
 
     echo "New version: $RELEASE_VERSION"
 
