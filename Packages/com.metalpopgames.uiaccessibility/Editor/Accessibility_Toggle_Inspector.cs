@@ -14,7 +14,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void OnEnable()
+		protected virtual void OnEnable()
 		{
 			m_UseCustomOnOff = serializedObject.FindProperty("m_UseCustomOnOff");
 			m_CustomOn = serializedObject.FindProperty("m_CustomOn");

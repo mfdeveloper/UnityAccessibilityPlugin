@@ -11,8 +11,9 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
 			m_HandleActivation = serializedObject.FindProperty("m_HandleActivation");
 		}
 
