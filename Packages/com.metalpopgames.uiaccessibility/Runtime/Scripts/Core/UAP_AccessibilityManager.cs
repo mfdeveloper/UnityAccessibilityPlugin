@@ -3,10 +3,8 @@
 
 #define IOS_USENATIVESWIPES
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
