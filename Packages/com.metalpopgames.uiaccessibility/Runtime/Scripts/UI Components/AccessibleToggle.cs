@@ -131,7 +131,7 @@ namespace UAP
 				if (m_UseCustomOnOff)
 				{
 					if (m_CustomHintsAreLocalizationKeys)
-						return UAP_AccessibilityManager.Localize(m_CustomOn);
+						return UAP_AccessibilityManager.Localize(m_CustomOn, this);
 					return m_CustomOn;
 				}
 				else
@@ -142,7 +142,7 @@ namespace UAP
 				if (m_UseCustomOnOff)
 				{
 					if (m_CustomHintsAreLocalizationKeys)
-						return UAP_AccessibilityManager.Localize(m_CustomOff);
+						return UAP_AccessibilityManager.Localize(m_CustomOff, this);
 					return m_CustomOff;
 				}
 				else

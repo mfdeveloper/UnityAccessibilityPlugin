@@ -1,0 +1,17 @@
+{
+	"name": "com.metalpopgames.uiaccessibility.unity-localization",
+	"displayName": "UI Accessibility Plugin (UAP): Unity Localization",
+	"version": "0.0.1",
+	"unity": "2017.4",
+	"description": "The UI Accessibility Plugin (UAP) integration with Unity Localization official UPM package, to translate keys for screen readers",
+    "documentationUrl": "http://www.metalpopgames.com/assetstore/accessibility/doc/HowToGuides.html#Localization",
+	"dependencies": {
+		"com.unity.localization": "1.4.3",
+		"com.metalpopgames.uiaccessibility": "1.1.3"
+	},
+    "author": {
+        "name": "Felipe Ferreira",
+        "url": "https://github.com/mfdeveloper"
+    },
+	"samples": []
+}

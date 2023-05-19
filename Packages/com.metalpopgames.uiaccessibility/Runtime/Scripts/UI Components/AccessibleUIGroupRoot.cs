@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
@@ -923,16 +924,38 @@ namespace UAP
 
 		public string GetContainerName(bool useGameObjectNameIfNone = false)
 		{
-			if (m_ContainerName.Length > 0)
+			string containerName = string.Empty;
+			
+			if (IsNameLocalizationKey())
+				containerName =  UAP_AccessibilityManager.Localize(m_ContainerName, this);
+			
+			if (string.IsNullOrWhiteSpace(containerName) && m_ContainerName.Length > 0)
 			{
-				if (IsNameLocalizationKey())
-					return UAP_AccessibilityManager.Localize(m_ContainerName);
-				return m_ContainerName;
+				containerName = m_ContainerName;
+			} else if (useGameObjectNameIfNone)
+			{
+				containerName = gameObject.name;
 			}
 
-			if (useGameObjectNameIfNone)
-				return gameObject.name;
-			return "";
+			return containerName;
+		}
+		
+		public async Task<string> GetContainerNameAsync(bool useGameObjectNameIfNone = false)
+		{
+			string containerName = string.Empty;
+			
+			if (IsNameLocalizationKey())
+				containerName = await UAP_AccessibilityManager.LocalizeAsync(m_ContainerName, this);
+
+			if (string.IsNullOrWhiteSpace(containerName) && m_ContainerName.Length > 0)
+			{
+				containerName = m_ContainerName;
+			} else if (useGameObjectNameIfNone)
+			{
+				containerName = gameObject.name;
+			}
+
+			return containerName;
 		}
 
 		//////////////////////////////////////////////////////////////////////////

@@ -1,20 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace UAP
 {
 	[CustomEditor(typeof(AccessibleLabel)), CanEditMultipleObjects]
 	public class Accessibility_Label_Inspector : Accessibility_InspectorShared
 	{
-		//////////////////////////////////////////////////////////////////////////
-
-		void OnEnable()
-		{
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		public override void OnInspectorGUI()
 		{
 			SetupGUIStyles();

@@ -7,14 +7,7 @@ namespace UAP
 	[CustomEditor(typeof(AccessibleSlider)), CanEditMultipleObjects]
 	public class Accessibility_Slider_Inspector : Accessibility_InspectorShared
 	{
-		//////////////////////////////////////////////////////////////////////////
-
-		void OnEnable()
-		{
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		public override void OnInspectorGUI()
 		{
 			SetupGUIStyles();

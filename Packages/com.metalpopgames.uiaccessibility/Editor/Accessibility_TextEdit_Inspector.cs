@@ -1,20 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace UAP
 {
 	[CustomEditor(typeof(AccessibleTextEdit)), CanEditMultipleObjects]
 	public class Accessibility_TextEdit_Inspector : Accessibility_InspectorShared
 	{
-		//////////////////////////////////////////////////////////////////////////
-
-		void OnEnable()
-		{
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		public override void OnInspectorGUI()
 		{
 			SetupGUIStyles();

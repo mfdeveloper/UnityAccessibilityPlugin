@@ -3,12 +3,15 @@
 
 #define IOS_USENATIVESWIPES
 
-using System.Collections.Generic;
 using System.Globalization;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UAP.ScriptableObjects;
 
 namespace UAP
 {
@@ -178,7 +181,8 @@ namespace UAP
 		private AudioClip m_TextEditAsAudio = null;
 		private AudioClip m_DropDownAsAudio = null;
 
-		[Header("Localization")]
+		[Header("Localization")] 
+		public LocalizationStrategy m_LocalizationStrategy;
 		private static string m_CurrentLanguage = "English";
 		private static Dictionary<string, string> m_CurrentLocalizationTable = null;
 
@@ -253,7 +257,28 @@ namespace UAP
 		public delegate void OnAccessibilityModeChanged(bool enabled);
 		private OnAccessibilityModeChanged m_OnAccessibilityModeChanged = null;
 		private OnTapEvent m_OnBackCallbacks = null;
+		
+		/// <summary>
+		/// A simple <a href="https://refactoring.guru/design-patterns/singleton/csharp/example">Singleton</a>
+		/// property to get the current instance/gameObject on scene.
+		/// </summary>
+		/// <remarks>
+		/// This property is useful to access <see cref="UAP_AccessibilityManager"/>
+		/// instance from <see cref="UnityEditor.Editor"/> scripts
+		/// </remarks>
+		[SuppressMessage("ReSharper", "ConvertIfStatementToNullCoalescingExpression")]
+		public static UAP_AccessibilityManager Instance
+		{
+			get
+			{
+				if (instance == null)
+				{
+					instance = FindObjectOfType<UAP_AccessibilityManager>();
+				}
 
+				return instance;
+			}
+		}
 
 		// Swipe Detection
 		//////////////////////////////////////////////////////////////////////////
@@ -1389,14 +1414,20 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void ReadHint()
+		async void ReadHint()
 		{
 			if (m_CurrentItem == null)
 				return;
 
 			if (m_CurrentItem.m_Object.m_CustomHint)
 			{
-				SayAudio(m_CurrentItem.m_Object.m_HintAsAudio, m_CurrentItem.m_Object.GetCustomHint(), UAP_AudioQueue.EAudioType.Element_Hint, m_CurrentItem.m_Object.m_AllowVoiceOver);
+				var translatedHint = await m_CurrentItem.m_Object.GetCustomHintAsync();
+				if (string.IsNullOrWhiteSpace(translatedHint))
+				{
+					translatedHint = m_CurrentItem.m_Object.GetCustomHint();
+				}
+				
+				SayAudio(m_CurrentItem.m_Object.m_HintAsAudio, translatedHint, UAP_AudioQueue.EAudioType.Element_Hint, m_CurrentItem.m_Object.m_AllowVoiceOver);
 			}
 			else
 			{
@@ -2908,12 +2939,23 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private void ReadContainerName()
+		private async void ReadContainerName()
 		{
 			if (!m_IsEnabled)
 				return;
 
-			string containerName = m_ActiveContainers[m_ActiveContainerIndex].GetContainerName();
+			var activeGroupRoot = m_ActiveContainers[m_ActiveContainerIndex];
+			if (activeGroupRoot == null)
+			{
+				return;
+			}
+
+			string containerName = await activeGroupRoot.GetContainerNameAsync();
+			if (string.IsNullOrWhiteSpace(containerName))
+			{
+				containerName = activeGroupRoot.GetContainerName();
+			}
+			
 			if (containerName.Length > 0)
 				SayAudio(null, containerName, UAP_AudioQueue.EAudioType.Container_Name, true);
 		}
@@ -4729,16 +4771,77 @@ namespace UAP
 		/// In all other cases, you can use this function to hook up your own localization system/plugin and make the appropriate call.
 		/// </summary>
 		/// <param name="key"></param>
+		/// <param name="element"></param>
+		/// <param name="accessibilityManager"></param>
 		/// <returns></returns>
-		static public string Localize(string key)
+		public static string Localize<T>(string key, T element = null, UAP_AccessibilityManager accessibilityManager = null) where T : MonoBehaviour
 		{
 	#if ACCESS_NGUI
 			if (key.Length > 0 && Localization.Has(key))
 				return Localization.Get(key);
 	#endif
+			
+			var translatedValue = string.Empty;
 
-			// Try internal localization next
-			return Localize_Internal(key);
+			if (instance != null && accessibilityManager == null)
+			{
+				 accessibilityManager = instance;
+			}
+			
+			// Try ScriptableObject strategy custom localization
+			if (accessibilityManager != null && accessibilityManager.m_LocalizationStrategy != null)
+			{
+
+				if (element == null)
+				{
+					element = FetchElementOrGroup<T>(accessibilityManager) as T;
+				}
+
+				translatedValue = accessibilityManager.m_LocalizationStrategy.Localize(ref key, element);
+				
+				// TODO: [Recommended] Use a Strategy pattern here if you need update more MonoBehaviour elements
+				if (element is UAP_BaseElement baseElement && !string.IsNullOrWhiteSpace(key))
+				{
+					baseElement.m_Hint = key;
+				}
+				
+				if (element is AccessibleUIGroupRoot groupRoot && !string.IsNullOrWhiteSpace(key))
+				{
+					groupRoot.m_ContainerName = key;
+				}
+			}
+
+			if (string.IsNullOrWhiteSpace(translatedValue))
+			{
+				// Try internal localization next
+				translatedValue = Localize_Internal(key);
+			}
+
+			return translatedValue;
+		}
+
+		public static async Task<string> LocalizeAsync<T>(string key, T element = null) where T : MonoBehaviour
+		{
+			var translatedValue = string.Empty;
+			
+			// Try ScriptableObject strategy custom localization
+			if (instance != null && instance.m_LocalizationStrategy != null)
+			{
+				if (element == null)
+				{
+					element = FetchElementOrGroup<T>(instance) as T;
+				}
+				
+				translatedValue = await instance.m_LocalizationStrategy.LocalizeAsync(ref key, element);
+			}
+			
+			if (string.IsNullOrWhiteSpace(translatedValue))
+			{
+				// Try internal localization next
+				translatedValue = Localize_Internal(key);
+			}
+
+			return translatedValue;
 		}
 
 		/// <summary>
@@ -4826,7 +4929,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static private void Log(string message)
+		private static void Log(string message)
 		{
 			if (instance == null || !instance.m_DebugOutput)
 				return;
@@ -4836,5 +4939,21 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
+		private static MonoBehaviour FetchElementOrGroup<T>(UAP_AccessibilityManager accessibilityManager) where T : MonoBehaviour
+		{
+			var genericsType = typeof(T);
+			if (genericsType.IsAssignableFrom(typeof(UAP_BaseElement)))
+			{
+				if (accessibilityManager.m_CurrentItem.m_Object != null)
+				{
+					return accessibilityManager.m_CurrentItem.m_Object;
+				}
+			} else if (genericsType.IsAssignableFrom(typeof(AccessibleUIGroupRoot)))
+			{
+				return accessibilityManager.m_ActiveContainers[instance.m_ActiveContainerIndex];
+			}
+
+			return null;
+		}
 	}
 }

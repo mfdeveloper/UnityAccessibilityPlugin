@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace UAP
@@ -26,6 +25,7 @@ namespace UAP
 		private SerializedProperty m_AllowVoiceOverGlobal;
 		private SerializedProperty m_AllowBuiltInVirtualKeyboard;
 
+		// Speech delays
 		private SerializedProperty m_HintDelay;
 		private SerializedProperty m_DisabledDelay;
 		private SerializedProperty m_ValueDelay;
@@ -46,14 +46,19 @@ namespace UAP
 		private SerializedProperty m_UIBoundsReached;
 		private SerializedProperty m_UIPopUpOpen;
 		private SerializedProperty m_UIPopUpClose;
+		
+		// Localization custom
+		private SerializedProperty m_LocalizationStrategy;
 
 		// NGUI
 		static bool showNGUI = false;
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+			
 			m_DefaultState = serializedObject.FindProperty("m_DefaultState");
 			m_AutoTurnOnIfScreenReaderDetected = serializedObject.FindProperty("m_AutoTurnOnIfScreenReaderDetected");
 			m_SaveEnabledState = serializedObject.FindProperty("m_SaveEnabledState");
@@ -84,6 +89,8 @@ namespace UAP
 			m_UIBoundsReached = serializedObject.FindProperty("m_UIBoundsReached");
 			m_UIPopUpOpen = serializedObject.FindProperty("m_UIPopUpOpen");
 			m_UIPopUpClose = serializedObject.FindProperty("m_UIPopUpClose");
+			
+			m_LocalizationStrategy = serializedObject.FindProperty("m_LocalizationStrategy");
 
 			LoadLogoTexture();
 		}
@@ -263,6 +270,15 @@ namespace UAP
 				m_TypeDelay.floatValue = EditorGUILayout.DelayedFloatField(new GUIContent("Type delay", "Define the delay to explain/say the type description of fields"), m_TypeDelay.floatValue);
 
 				EditorGUILayout.Separator();
+				
+				EditorGUILayout.SelectableLabel("Localization Custom/Plugin", subSectionStyle);
+
+				const string localizationStrategyTooltip = "Add here a custom ScriptableObject asset with a custom external/plugin localization implementation " +
+				                                           "(e.g async localization loading, unity localization package...)";
+				
+				EditorGUILayout.PropertyField(m_LocalizationStrategy, new GUIContent("Localization Strategy", localizationStrategyTooltip));
+				
+				EditorGUILayout.Separator();
 
 				if (GUILayout.Button("Reset Settings to Default"))
 				{
@@ -274,6 +290,8 @@ namespace UAP
 					m_CyclicMenus.boolValue = false;
 					m_AllowVoiceOverGlobal.boolValue = true;
 					m_AllowBuiltInVirtualKeyboard.boolValue = true;
+
+					m_LocalizationStrategy.objectReferenceValue = null;
 				}
 			}
 

@@ -81,7 +81,25 @@ namespace UAP
 		private SerializedProperty m_OnInteractionEnd;
 		private SerializedProperty m_OnInteractionAbort;
 
+		protected static UAP_AccessibilityManager accessibilityManager;
+
 		//////////////////////////////////////////////////////////////////////////
+
+		protected virtual void OnEnable()
+		{
+			if (accessibilityManager == null)
+			{
+				accessibilityManager = UAP_AccessibilityManager.Instance;
+			}
+		}
+		
+		protected virtual void OnDisable()
+		{
+			if (accessibilityManager == null)
+			{
+				accessibilityManager = UAP_AccessibilityManager.Instance;
+			}
+		}
 
 		public void DrawContainerNavigationSettings()
 		{
@@ -183,7 +201,7 @@ namespace UAP
 					if (m_HintIsLocalizationKey.boolValue)
 					{
 						EditorGUI.BeginDisabledGroup(true);
-						EditorGUILayout.TextArea(UAP_AccessibilityManager.Localize(m_Hint.stringValue), myTextAreaInputStyle);
+						EditorGUILayout.TextArea(UAP_AccessibilityManager.Localize(key: m_Hint.stringValue, element: target as UAP_BaseElement, accessibilityManager), myTextAreaInputStyle);
 						EditorGUI.EndDisabledGroup();
 					}
 					--EditorGUI.indentLevel;
@@ -191,6 +209,7 @@ namespace UAP
 
                 EditorGUILayout.PropertyField(m_SkipIfDisabled, new GUIContent("Skip if disabled", "Jump to the next item if this field is disabled"));
             }
+			
 			return showSpeechOutput;
 		}
 

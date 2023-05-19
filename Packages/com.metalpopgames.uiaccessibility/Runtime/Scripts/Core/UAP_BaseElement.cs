@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -399,7 +400,7 @@ namespace UAP
 
 		protected string CombinePrefix(string text)
 		{
-			string prefix = m_PrefixIsLocalizationKey ? UAP_AccessibilityManager.Localize(m_Prefix) : m_Prefix;
+			string prefix = m_PrefixIsLocalizationKey ? UAP_AccessibilityManager.Localize(m_Prefix, this) : m_Prefix;
 			if (prefix.Length == 0)
 				return text;
 
@@ -497,7 +498,7 @@ namespace UAP
 				AutoFillTextLabel();
 
 			if (IsNameLocalizationKey())
-				return CombinePrefix(UAP_AccessibilityManager.Localize(m_Text));
+				return CombinePrefix(UAP_AccessibilityManager.Localize(m_Text, this));
 
 			// Only use prefix if there is a text label associated
 			if (m_TryToReadLabel)
@@ -658,8 +659,13 @@ namespace UAP
 		public string GetCustomHint()
 		{
 			if (m_HintIsLocalizationKey)
-				return UAP_AccessibilityManager.Localize(m_Hint);
+				return UAP_AccessibilityManager.Localize(m_Hint, this);
 			return m_Hint;
+		}
+		
+		public Task<string> GetCustomHintAsync()
+		{
+			return m_HintIsLocalizationKey ? UAP_AccessibilityManager.LocalizeAsync(m_Hint, this) : Task.FromResult(m_Hint);
 		}
 
 		/// <summary>

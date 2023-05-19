@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.4]
+### Added
+- ScriptableObject `LocalizationStrategy` that allows external plugins integrations for localization keys (e.g com.unity.localization package)
+- Async localization loadings using `UAP_AccessibilityManager.LocalizeAsync()` method with `Task<T>` async/await approach (better for **WebGL** and **Mobile** builds)
+
+## [1.1.3]
+### Fixed
+- Bug Fix: Fixed NullPointer error on `Accessibility_Toggle_Inspector` when click on **"Speech Output"** inspector section
+
+## [1.1.2]
+### Added
+- Expose the global delay timers on `UAP_AccessibilityManager` inspector
+- Added a new field `m_SkipIfDisabled` to skip disabled elements from TTS talk
+
 ## [1.1.1]
 ### Added
 - Support for TextMeshPro Button, DropDown and Input
