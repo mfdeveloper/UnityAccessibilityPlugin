@@ -353,6 +353,7 @@ MonoBehaviour:
   m_WasJustAdded: 1
   m_Type: 1
   m_CustomHint: 0
+  m_CustomHintIfDisabled: 0
   m_HintAsAudio: {fileID: 0}
   m_Hint: 
   m_HintIsLocalizationKey: 0
@@ -555,6 +556,7 @@ MonoBehaviour:
   m_WasJustAdded: 1
   m_Type: 1
   m_CustomHint: 1
+  m_CustomHintIfDisabled: 1
   m_HintAsAudio: {fileID: 0}
   m_Hint: DisabledButton
   m_HintIsLocalizationKey: 1
@@ -784,6 +786,7 @@ MonoBehaviour:
   m_WasJustAdded: 1
   m_Type: 1
   m_CustomHint: 0
+  m_CustomHintIfDisabled: 0
   m_HintAsAudio: {fileID: 0}
   m_Hint: 
   m_HintIsLocalizationKey: 0

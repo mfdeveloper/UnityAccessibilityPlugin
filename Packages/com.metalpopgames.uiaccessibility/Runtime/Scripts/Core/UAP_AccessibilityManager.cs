@@ -1418,8 +1418,16 @@ namespace UAP
 		{
 			if (m_CurrentItem == null)
 				return;
+			
+			/*
+			 * Say custom hint, when:
+			 * - Element is disabled => and the checkbox "Only If Disabled" IS checked
+			 * - Say for the both states => and the checkbox "Only If Disabled" IS NOT checked
+			 */
+			var isInteractable = m_CurrentItem.m_Object.IsInteractable();
+			var sayHint = m_CurrentItem.m_Object.m_CustomHint && !(m_CurrentItem.m_Object.m_CustomHintIfDisabled && isInteractable);
 
-			if (m_CurrentItem.m_Object.m_CustomHint)
+			if (sayHint)
 			{
 				var translatedHint = await m_CurrentItem.m_Object.GetCustomHintAsync();
 				if (string.IsNullOrWhiteSpace(translatedHint))

@@ -92,6 +92,7 @@ namespace UAP
 		AccessibleUIGroupRoot AUIContainer = null;
 
 		public bool m_CustomHint = false;
+		public bool m_CustomHintIfDisabled = false;
 		public AudioClip m_HintAsAudio = null;
 		public string m_Hint = "";
 		public bool m_HintIsLocalizationKey = false;
