@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
@@ -34,6 +32,9 @@ namespace UAP
 			if (m_ReferenceElement != null)
 				if (!m_ReferenceElement.gameObject.activeInHierarchy)
 					return false;
+			
+			if (m_SkipIfDisabled && !IsInteractable()) 
+				return false;
 
 			if (!UAP_AccessibilityManager.GetSpeakDisabledInteractables())
 				if (!IsInteractable())
@@ -130,7 +131,7 @@ namespace UAP
 				if (m_UseCustomOnOff)
 				{
 					if (m_CustomHintsAreLocalizationKeys)
-						return UAP_AccessibilityManager.Localize(m_CustomOn);
+						return UAP_AccessibilityManager.Localize(m_CustomOn, this);
 					return m_CustomOn;
 				}
 				else
@@ -141,7 +142,7 @@ namespace UAP
 				if (m_UseCustomOnOff)
 				{
 					if (m_CustomHintsAreLocalizationKeys)
-						return UAP_AccessibilityManager.Localize(m_CustomOff);
+						return UAP_AccessibilityManager.Localize(m_CustomOff, this);
 					return m_CustomOff;
 				}
 				else

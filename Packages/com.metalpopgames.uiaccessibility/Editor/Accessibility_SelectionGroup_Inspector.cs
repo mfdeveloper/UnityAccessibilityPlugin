@@ -1,20 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace UAP
 {
 	[CustomEditor(typeof(UAP_SelectionGroup)), CanEditMultipleObjects]
 	public class Accessibility_SelectionGroup_Inspector : Accessibility_InspectorShared
 	{
-		//////////////////////////////////////////////////////////////////////////
-
-		void OnEnable()
-		{
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		public override void OnInspectorGUI()
 		{
 			SetupGUIStyles();

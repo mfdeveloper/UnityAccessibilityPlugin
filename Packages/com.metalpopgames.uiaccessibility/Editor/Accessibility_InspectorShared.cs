@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace UAP
@@ -46,6 +44,7 @@ namespace UAP
 		private SerializedProperty m_AllowVoiceOver;
 		private SerializedProperty m_ReadType;
 		private SerializedProperty m_CustomHint;
+		private SerializedProperty m_CustomHintIfDisabled;
 		private SerializedProperty m_Hint;
 		private SerializedProperty m_HintIsLocalizationKey;
 		private SerializedProperty m_SkipIfDisabled;
@@ -83,7 +82,25 @@ namespace UAP
 		private SerializedProperty m_OnInteractionEnd;
 		private SerializedProperty m_OnInteractionAbort;
 
+		protected static UAP_AccessibilityManager accessibilityManager;
+
 		//////////////////////////////////////////////////////////////////////////
+
+		protected virtual void OnEnable()
+		{
+			if (accessibilityManager == null)
+			{
+				accessibilityManager = UAP_AccessibilityManager.Instance;
+			}
+		}
+		
+		protected virtual void OnDisable()
+		{
+			if (accessibilityManager == null)
+			{
+				accessibilityManager = UAP_AccessibilityManager.Instance;
+			}
+		}
 
 		public void DrawContainerNavigationSettings()
 		{
@@ -164,6 +181,7 @@ namespace UAP
 			m_AllowVoiceOver = serializedObject.FindProperty("m_AllowVoiceOver");
 			m_ReadType = serializedObject.FindProperty("m_ReadType");
 			m_CustomHint = serializedObject.FindProperty("m_CustomHint");
+			m_CustomHintIfDisabled = serializedObject.FindProperty("m_CustomHintIfDisabled");
 			m_Hint = serializedObject.FindProperty("m_Hint");
 			m_HintIsLocalizationKey = serializedObject.FindProperty("m_HintIsLocalizationKey");
 			
@@ -181,18 +199,20 @@ namespace UAP
 					++EditorGUI.indentLevel;
 					EditorGUILayout.PropertyField(m_Hint, new GUIContent("Hint Text", "Specify a custom hint text to be read if the user stays on this element for a few seconds."));
 					EditorGUILayout.PropertyField(m_HintIsLocalizationKey, new GUIContent("Is Localization Key", "If checked, the plugin will treat the hint text as a localization key and request a translation from the localization system at runtime."));
+					EditorGUILayout.PropertyField(m_CustomHintIfDisabled, new GUIContent("Only if Disabled", "If checked, the custom hint text will be said only when the element is disabled/not interactable."));
 					// Display localized text if needed
 					if (m_HintIsLocalizationKey.boolValue)
 					{
 						EditorGUI.BeginDisabledGroup(true);
-						EditorGUILayout.TextArea(UAP_AccessibilityManager.Localize(m_Hint.stringValue), myTextAreaInputStyle);
+						EditorGUILayout.TextArea(UAP_AccessibilityManager.Localize(key: m_Hint.stringValue, element: target as UAP_BaseElement, accessibilityManager), myTextAreaInputStyle);
 						EditorGUI.EndDisabledGroup();
 					}
 					--EditorGUI.indentLevel;
 				}
 
-                EditorGUILayout.PropertyField(m_SkipIfDisabled, new GUIContent("Skip if disabled", "Jump to the next item if this field is disabled"));
+                EditorGUILayout.PropertyField(m_SkipIfDisabled, new GUIContent("Skip if disabled", "Jump to the next item if this element is disabled"));
             }
+			
 			return showSpeechOutput;
 		}
 

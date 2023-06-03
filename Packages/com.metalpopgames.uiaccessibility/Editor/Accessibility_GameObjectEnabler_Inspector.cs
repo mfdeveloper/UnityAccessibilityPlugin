@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace UAP
@@ -12,8 +11,10 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+			
 			m_ObjectsToEnable = serializedObject.FindProperty("m_ObjectsToEnable");
 			m_ObjectsToDisable = serializedObject.FindProperty("m_ObjectsToDisable");
 		}

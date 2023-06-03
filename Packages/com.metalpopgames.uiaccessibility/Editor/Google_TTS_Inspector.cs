@@ -11,8 +11,9 @@ namespace UAP
 
         static bool showConfigs = true;
 
-        void OnEnable()
+        protected override void OnEnable()
         {
+            base.OnEnable();
             m_GoogleTTSAPIKey = serializedObject.FindProperty("m_GoogleTTSAPIKey");
         }
 

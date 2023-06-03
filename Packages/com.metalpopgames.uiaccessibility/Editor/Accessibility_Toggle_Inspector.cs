@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 
 namespace UAP
@@ -14,8 +13,10 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		protected virtual void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+			
 			m_UseCustomOnOff = serializedObject.FindProperty("m_UseCustomOnOff");
 			m_CustomOn = serializedObject.FindProperty("m_CustomOn");
 			m_CustomOff = serializedObject.FindProperty("m_CustomOff");

@@ -1,20 +1,11 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEditor;
 
 namespace UAP
 {
 	[CustomEditor(typeof(AccessibleButton_3D)), CanEditMultipleObjects]
 	public class Accessibility_Button_3D_Inspector : Accessibility_InspectorShared
 	{
-		//////////////////////////////////////////////////////////////////////////
-
-		void OnEnable()
-		{
-		}
-
-		//////////////////////////////////////////////////////////////////////////
-
+		
 		public override void OnInspectorGUI()
 		{
 			SetupGUIStyles();

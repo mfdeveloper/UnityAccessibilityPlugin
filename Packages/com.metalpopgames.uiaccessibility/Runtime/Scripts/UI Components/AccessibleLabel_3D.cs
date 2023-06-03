@@ -20,7 +20,7 @@ namespace UAP
 		protected override string GetMainText()
 		{
 			if (IsNameLocalizationKey())
-				return CombinePrefix(UAP_AccessibilityManager.Localize(m_Text));
+				return CombinePrefix(UAP_AccessibilityManager.Localize(m_Text, this));
 			return m_Text;
 		}
 

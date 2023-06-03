@@ -89,7 +89,7 @@ namespace UAP
 			if (!m_TryToReadLabel)
 			{
 				if (IsNameLocalizationKey())
-					return UAP_AccessibilityManager.Localize(m_Text);
+					return UAP_AccessibilityManager.Localize(m_Text, this);
 				return m_Text;
 			}
 
@@ -97,7 +97,7 @@ namespace UAP
 			if (label != null)
 			{
 				if (IsNameLocalizationKey())
-					return CombinePrefix(UAP_AccessibilityManager.Localize(label.text));
+					return CombinePrefix(UAP_AccessibilityManager.Localize(label.text, this));
 				else
 					return CombinePrefix(label.text);
 			}
@@ -117,13 +117,13 @@ namespace UAP
 			if (!string.IsNullOrEmpty(fromTMPLabel))
 			{
 				if (IsNameLocalizationKey())
-					return CombinePrefix(UAP_AccessibilityManager.Localize(fromTMPLabel));
+					return CombinePrefix(UAP_AccessibilityManager.Localize(fromTMPLabel, this));
 				else
 					return CombinePrefix(fromTMPLabel);
 			}
 
 			if (IsNameLocalizationKey())
-				return UAP_AccessibilityManager.Localize(m_Text);
+				return UAP_AccessibilityManager.Localize(m_Text, this);
 
 			return m_Text;
 		}
