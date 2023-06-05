@@ -1,0 +1,20 @@
+{
+    "name": "com.metalpopgames.uiaccessibility",
+    "rootNamespace": "UAP",
+    "references": [
+        "GUID:9bdf3bd7f3c8a494f8a6d6d854332ab9",
+        "GUID:6aad21e4501b9254b80a4e6d7ab60805",
+        "GUID:e8eaacefce40016469dee777932a6460",
+        "GUID:a3525e4d5b27c7944bd90686076f6d4b",
+        "GUID:394ccc2fd4043104b9c1b3ff7df489be"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
