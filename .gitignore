@@ -77,3 +77,45 @@ crashlytics-build.properties
 
 # Rider
 .idea
+
+# ---------------
+# Node .gitignore
+# ---------------
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+build/Release
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Avoid commit official unity packages, 
+# except .tgz/.tar tarball files 
+# (e.g output of 'npm pack')
+[pP]ackages/com.unity.*/*
+![pP]ackages/**/com.unity.*.tgz
+![pP]ackages/**/com.unity.*.tar

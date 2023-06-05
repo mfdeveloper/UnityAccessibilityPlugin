@@ -49,6 +49,44 @@
             "name": "SwitchPlayer",
             "type": "unity",
             "request": "launch"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${userHome}/.nvm/versions/node/current/node",
+            "name": "Node module",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceRoot}/lib/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${userHome}/.nvm/versions/node/current/node",
+            "name": "Node file",
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${file}",
+            "args": ["--repository", "test"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "${userHome}/.nvm/versions/node/current/node",
+            "name": "Node file: with arguments",
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            "stopOnEntry": false,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${file}",
+            "args": ["--argumentExample", "test"]
         }
     ]
 }
