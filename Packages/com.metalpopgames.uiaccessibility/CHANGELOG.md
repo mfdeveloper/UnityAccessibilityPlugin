@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.5]
+### Fixed
+- Rollback `Samples/UINavigationExample/Unity UI Navigation Example.unity` scene to the original forked repo
+- Moved previous disabled button example from the scene above to: `com.metalpopgames.uiaccessibility/Samples/UINavigationExample` folder.
+
 ## [1.1.4]
 ### Added
 - ScriptableObject `LocalizationStrategy` that allows external plugins integrations for localization keys (e.g com.unity.localization package)
