@@ -60,8 +60,8 @@ MonoBehaviour:
   m_AllowExternalJoining: 0
   m_AutoRead: 0
   m_Priority: 80
-  m_ContainerName: DisabledButton
-  m_IsLocalizationKey: 1
+  m_ContainerName: 
+  m_IsLocalizationKey: 0
   m_2DNavigation: 0
   m_ConstrainToContainerUp: 0
   m_ConstrainToContainerDown: 0
@@ -150,7 +150,7 @@ MonoBehaviour:
       m_TableCollectionName: Strings
     m_TableEntryReference:
       m_KeyId: 0
-      m_Key: 
+      m_Key: DisabledButton
     m_FallbackState: 0
     m_WaitForCompletion: 0
     m_LocalVariables: []

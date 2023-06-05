@@ -13,5 +13,11 @@
         "name": "Felipe Ferreira",
         "url": "https://github.com/mfdeveloper"
     },
-	"samples": []
+	"samples": [
+		{
+			"displayName": "UI Navigation Example: Unity localization integration",
+			"description": "UI Navigation menu with a disabled button, that says a custom hint with localized text. Translations use com.unity.localization official package",
+			"path": "Samples~/UINavigationLocalizationExample"
+		}
+	]
 }

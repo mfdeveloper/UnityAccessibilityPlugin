@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.4]
+## [1.1.5]
 ### Added
+- Rollback `Samples/UINavigationExample/Unity UI Navigation Example.unity` scene to the original forked repo
+- Moved previous disabled button example from the scene above to: `com.metalpopgames.uiaccessibility/Samples/UINavigationExample` folder.
+
+## [1.1.4]
+### Fixed
 - ScriptableObject `LocalizationStrategy` that allows external plugins integrations for localization keys (e.g com.unity.localization package)
 - Async localization loadings using `UAP_AccessibilityManager.LocalizeAsync()` method with `Task<T>` async/await approach (better for **WebGL** and **Mobile** builds)
 
