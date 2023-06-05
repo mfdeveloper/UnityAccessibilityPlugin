@@ -21,6 +21,7 @@ MonoBehaviour:
     m_Address: Assets/Localization/LocalizationTables/Strings Shared Data.asset
     m_ReadOnly: 1
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: 06bb9a14d06a4e8418b0848fc6f4cd34, type: 2}
   m_SchemaSet:
