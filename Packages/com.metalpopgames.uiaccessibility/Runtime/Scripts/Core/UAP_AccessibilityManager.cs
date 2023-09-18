@@ -3,6 +3,7 @@
 
 #define IOS_USENATIVESWIPES
 
+using System.Collections.Concurrent;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -249,14 +250,21 @@ namespace UAP
 		private OnTapEvent m_OnTwoFingerSingleTapCallbacks = null;
 		private OnTapEvent m_OnThreeFingerSingleTapCallbacks = null;
 		private OnTapEvent m_OnThreeFingerDoubleTapCallbacks = null;
-		public delegate void OnSwipeEvent();
 		private OnTapEvent m_OnTwoFingerSwipeUpHandler = null;
 		private OnTapEvent m_OnTwoFingerSwipeDownHandler = null;
 		private OnTapEvent m_OnTwoFingerSwipeLeftHandler = null;
 		private OnTapEvent m_OnTwoFingerSwipeRightHandler = null;
+		
+		public delegate void OnMobileElementChangeEvent(ESDirection? direction, float fingerCount);
+		public delegate bool OnTouchExploreActiveEvent(float fingerCount);
+		private OnMobileElementChangeEvent m_OnSwipeHandler;
+		private OnMobileElementChangeEvent m_OnMobileElementChangeHandler;
+		private OnTouchExploreActiveEvent m_OnTouchExploreActiveHandler;
 		public delegate void OnAccessibilityModeChanged(bool enabled);
 		private OnAccessibilityModeChanged m_OnAccessibilityModeChanged = null;
 		private OnTapEvent m_OnBackCallbacks = null;
+
+		#region Properties
 		
 		/// <summary>
 		/// A simple <a href="https://refactoring.guru/design-patterns/singleton/csharp/example">Singleton</a>
@@ -279,6 +287,18 @@ namespace UAP
 				return instance;
 			}
 		}
+
+		/// <summary>
+		/// Check if the player is touching (holding finger/mouse)
+		/// </summary>
+		/// <remarks>
+		/// <b>PS:</b> This property is great to check and do something when the player is touching,
+		/// outside of this plugin
+		/// </remarks>
+		[SuppressMessage("ReSharper", "UnusedMember.Global")] 
+		public virtual bool IsTouching => GetTouchCount() == 1;
+		
+		#endregion
 
 		// Swipe Detection
 		//////////////////////////////////////////////////////////////////////////
@@ -2586,6 +2606,7 @@ namespace UAP
 		private float m_TouchExplore_WaitForDoubleTapToExpireTimer = -1.0f;
 		private Vector3 m_TouchExplore_CheckStartPosition = Vector3.one;
 		private const float m_TouchExplore_CheckDuration = 0.15f;
+		private bool? m_TouchExplore_HandleCalled = false;
 
 		private bool TouchExploreMinDistanceReach(float movedDistance, float moveTime)
 		{
@@ -2615,6 +2636,7 @@ namespace UAP
 				m_TouchExplore_Active = false;
 				m_TouchExplore_CheckVelocityTimer = -1.0f;
 				m_TouchExplore_WaitForDoubleTapToExpireTimer = -1.0f;
+				m_TouchExplore_HandleCalled = false;
 				return;
 			}
 
@@ -2626,7 +2648,15 @@ namespace UAP
 					m_TouchExplore_Active = false;
 					m_TouchExplore_CheckVelocityTimer = -1.0f;
 					m_TouchExplore_WaitForDoubleTapToExpireTimer = -1.0f;
+					
+					// Allow call TouchExploreActive event again, when is not touching!!
+					m_TouchExplore_HandleCalled = false;
 					return;
+				}
+				
+				if (!m_TouchExplore_HandleCalled.HasValue || !m_TouchExplore_HandleCalled.Value)
+				{
+					m_TouchExplore_HandleCalled = m_OnTouchExploreActiveHandler?.Invoke(GetTouchCount());
 				}
 
 				// Update element under finger
@@ -2646,6 +2676,7 @@ namespace UAP
 						m_TouchExplore_Active = false;
 						m_TouchExplore_CheckVelocityTimer = -1.0f;
 						m_TouchExplore_WaitForDoubleTapToExpireTimer = -1.0f;
+						m_TouchExplore_HandleCalled = false;
 						return;
 					}
 
@@ -2915,6 +2946,8 @@ namespace UAP
 							PlaySFX(m_UINavigationClick);
 							UpdateCurrentItem(UAP_BaseElement.EHighlightSource.TouchExplore);
 							ReadItem(m_CurrentItem);
+							
+							m_OnMobileElementChangeHandler?.Invoke(null, GetTouchCount());
 
 							//Debug.Log("Element under finger is " + elements[e].m_Object.name);
 						}
@@ -2934,6 +2967,8 @@ namespace UAP
 								PlaySFX(m_UINavigationClick);
 								UpdateCurrentItem(UAP_BaseElement.EHighlightSource.TouchExplore);
 								ReadItem(m_CurrentItem);
+								
+								m_OnMobileElementChangeHandler?.Invoke(null, GetTouchCount());
 							}
 						}
 
@@ -3431,10 +3466,16 @@ namespace UAP
 							if (dir == ESDirection.ERight)
 							{
 								IncrementUIElement();
+								
+								m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+								m_OnSwipeHandler?.Invoke(dir, fingerCount);
 							}
 							else if (dir == ESDirection.ELeft)
 							{
 								DecrementUIElement();
+								
+								m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+								m_OnSwipeHandler?.Invoke(dir, fingerCount);
 							}
 							else if (dir == ESDirection.EDown)
 							{
@@ -3443,6 +3484,9 @@ namespace UAP
 								{
 									UpdateCurrentItem(UAP_BaseElement.EHighlightSource.UserInput);
 									PlaySFX(m_UINavigationClick);
+									
+									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+									m_OnSwipeHandler?.Invoke(dir, fingerCount);
 								}
 								else
 								{
@@ -3459,6 +3503,9 @@ namespace UAP
 								{
 									UpdateCurrentItem(UAP_BaseElement.EHighlightSource.UserInput);
 									PlaySFX(m_UINavigationClick);
+									
+									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+									m_OnSwipeHandler?.Invoke(dir, fingerCount);
 								}
 								else
 								{
@@ -4355,7 +4402,7 @@ namespace UAP
 		/// Do not forget to call UnregisterOnPauseToggledCallback() when your object gets destroyed.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void RegisterOnPauseToggledCallback(OnPauseToggleCallbackFunc func)
+		public static void RegisterOnPauseToggledCallback(OnPauseToggleCallbackFunc func)
 		{
 			Initialize();
 
@@ -4367,7 +4414,7 @@ namespace UAP
 		/// See the documentation on <a href="MagicGestures.html">Magic Gestures</a>.
 		/// </summary>
 		/// <param name="func">Member function that was registered.</param>
-		static public void UnregisterOnPauseToggledCallback(OnPauseToggleCallbackFunc func)
+		public static void UnregisterOnPauseToggledCallback(OnPauseToggleCallbackFunc func)
 		{
 			Initialize();
 
@@ -4380,7 +4427,7 @@ namespace UAP
 		/// Register to receive a callback when the user made the gesture for Back.
 		/// See the documentation on <a href="MagicGestures.html">Magic Gestures</a>.
 		/// </summary>
-		static public void RegisterOnBackCallback(OnTapEvent func)
+		public static void RegisterOnBackCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4391,11 +4438,53 @@ namespace UAP
 		/// Unregister from notifications when the user made the gesture for Back.
 		/// See the documentation on <a href="MagicGestures.html">Magic Gestures</a>.
 		/// </summary>
-		static public void UnregisterOnBackCallback(OnTapEvent func)
+		public static void UnregisterOnBackCallback(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnBackCallbacks -= func;
+		}
+		
+		public static void RegisterOnSwipeSingleTapCallback(OnMobileElementChangeEvent func)
+		{
+			Initialize();
+
+			instance.m_OnSwipeHandler += func;
+		}
+		
+		public static void UnregisterOnSwipeSingleTapCallback(OnMobileElementChangeEvent func)
+		{
+			Initialize();
+
+			instance.m_OnSwipeHandler -= func;
+		}
+		
+		public static void RegisterOnMobileChangeElementCallback(OnMobileElementChangeEvent func)
+		{
+			Initialize();
+
+			instance.m_OnMobileElementChangeHandler += func;
+		}
+		
+		public static void UnregisterOnMobileChangeElementCallback(OnMobileElementChangeEvent func)
+		{
+			Initialize();
+
+			instance.m_OnMobileElementChangeHandler -= func;
+		}
+		
+		public static void RegisterOnTouchExploreActiveCallback(OnTouchExploreActiveEvent func)
+		{
+			Initialize();
+
+			instance.m_OnTouchExploreActiveHandler += func;
+		}
+		
+		public static void UnregisterOnTouchExploreActiveCallback(OnTouchExploreActiveEvent func)
+		{
+			Initialize();
+
+			instance.m_OnTouchExploreActiveHandler -= func;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -4406,7 +4495,7 @@ namespace UAP
 		/// It is fired only after the double tap threshold time is up.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void RegisterOnTwoFingerSingleTapCallback(OnTapEvent func)
+		public static void RegisterOnTwoFingerSingleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4417,7 +4506,7 @@ namespace UAP
 		/// Unregister from callback for two finger single taps.
 		/// </summary>
 		/// <param name="func">Member function that was registered.</param>
-		static public void UnregisterOnTwoFingerSingleTapCallback(OnTapEvent func)
+		public static void UnregisterOnTwoFingerSingleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4432,7 +4521,7 @@ namespace UAP
 		/// It is fired only after the double tap threshold time is up.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void RegisterOnThreeFingerSingleTapCallback(OnTapEvent func)
+		public static void RegisterOnThreeFingerSingleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4443,7 +4532,7 @@ namespace UAP
 		/// Unregister from callback for three finger single taps.
 		/// </summary>
 		/// <param name="func">Member function that was registered.</param>
-		static public void UnregisterOnThreeFingerSingleTapCallback(OnTapEvent func)
+		public static void UnregisterOnThreeFingerSingleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4458,7 +4547,7 @@ namespace UAP
 		/// It is fired only after the double tap threshold time is up.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void RegisterOnThreeFingerDoubleTapCallback(OnTapEvent func)
+		public static void RegisterOnThreeFingerDoubleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4469,7 +4558,7 @@ namespace UAP
 		/// Unregister from callback for three finger double taps.
 		/// </summary>
 		/// <param name="func">Member function that was registered.</param>
-		static public void UnregisterOnThreeFingerDoubleTapCallback(OnTapEvent func)
+		public static void UnregisterOnThreeFingerDoubleTapCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4487,7 +4576,7 @@ namespace UAP
 		/// exit and re-enter the app in hopes to restore accessibility mode.<br><br>
 		/// </summary>
 		/// <param name="func">function to receive the callback</param>
-		static public void RegisterAccessibilityModeChangeCallback(OnAccessibilityModeChanged func)
+		public static void RegisterAccessibilityModeChangeCallback(OnAccessibilityModeChanged func)
 		{
 			Initialize();
 
@@ -4498,7 +4587,7 @@ namespace UAP
 		/// Stop receiving notifications when the accessibility mode state changes.
 		/// </summary>
 		/// <param name="func">the callback function that should no longer receive calls</param>
-		static public void UnregisterAccessibilityModeChangeCallback(OnAccessibilityModeChanged func)
+		public static void UnregisterAccessibilityModeChangeCallback(OnAccessibilityModeChanged func)
 		{
 			Initialize();
 
@@ -4510,19 +4599,19 @@ namespace UAP
 		/// <summary>
 		/// Overrides the regular two finger swipe up function, which is Read-From-Top.
 		/// Use this to handle the gesture yourself. This will stop the 
-		/// Read-From-Top feature from working until ::ResetTwoFingerSwipeUpHandler is called.<br><br>
+		/// Read-From-Top feature from working until ::ResetTwoFingerSwipeUpHandler is called.<br/><br/>
 		/// This can be very useful during gameplay, if the gesture is used to read out stats or help
 		/// instead.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void SetTwoFingerSwipeUpHandler(OnTapEvent func)
+		public static void SetTwoFingerSwipeUpHandler(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnTwoFingerSwipeUpHandler = func;
 		}
 
-		static public void ResetTwoFingerSwipeUpHandler()
+		public static void ResetTwoFingerSwipeUpHandler()
 		{
 			Initialize();
 
@@ -4531,28 +4620,28 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public void RegisterOnTwoFingerSwipeLeftCallback(OnTapEvent func)
+		public static void RegisterOnTwoFingerSwipeLeftCallback(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnTwoFingerSwipeLeftHandler += func;
 		}
 
-		static public void UnregisterOnTwoFingerSwipeLeftCallback(OnTapEvent func)
+		public static void UnregisterOnTwoFingerSwipeLeftCallback(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnTwoFingerSwipeLeftHandler -= func;
 		}
 
-		static public void RegisterOnTwoFingerSwipeRightCallback(OnTapEvent func)
+		public static void RegisterOnTwoFingerSwipeRightCallback(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnTwoFingerSwipeRightHandler += func;
 		}
 
-		static public void UnregisterOnTwoFingerSwipeRightCallback(OnTapEvent func)
+		public static void UnregisterOnTwoFingerSwipeRightCallback(OnTapEvent func)
 		{
 			Initialize();
 
@@ -4569,14 +4658,14 @@ namespace UAP
 		/// instead.
 		/// </summary>
 		/// <param name="func">Member function to call when the gesture is detected.</param>
-		static public void SetTwoFingerSwipeDownHandler(OnTapEvent func)
+		public static void SetTwoFingerSwipeDownHandler(OnTapEvent func)
 		{
 			Initialize();
 
 			instance.m_OnTwoFingerSwipeDownHandler = func;
 		}
 
-		static public void ResetTwoFingerSwipeDownHandler()
+		public static void ResetTwoFingerSwipeDownHandler()
 		{
 			Initialize();
 
@@ -4585,7 +4674,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public bool SelectElement(GameObject element, bool forceRepeatItem = false)
+		public static bool SelectElement(GameObject element, bool forceRepeatItem = false)
 		{
 			if (element == null)
 				return false;
@@ -4604,7 +4693,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public bool MakeActiveContainer(AccessibleUIGroupRoot container, bool forceRepeatActiveItem = false)
+		public static bool MakeActiveContainer(AccessibleUIGroupRoot container, bool forceRepeatActiveItem = false)
 		{
 			if (instance == null)
 				return false;
@@ -4648,7 +4737,7 @@ namespace UAP
 		/// This might be null. 
 		/// </summary>
 		/// <returns></returns>
-		static public GameObject GetCurrentFocusObject()
+		public static GameObject GetCurrentFocusObject()
 		{
 			Initialize();
 
@@ -4672,35 +4761,35 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public bool UseAndroidTTS()
+		public static bool UseAndroidTTS()
 		{
 			Initialize();
 
 			return instance.m_AndroidTTS;
 		}
 
-		static public bool UseiOSTTS()
+		public static bool UseiOSTTS()
 		{
 			Initialize();
 
 			return instance.m_iOSTTS;
 		}
 
-		static public bool UseWindowsTTS()
+		public static bool UseWindowsTTS()
 		{
 			Initialize();
 
 			return instance.m_WindowsTTS;
 		}
 
-		static public bool UseMacOSTTS()
+		public static bool UseMacOSTTS()
 		{
 			Initialize();
 
 			return instance.m_MacOSTTS;
 		}
 
-		static public bool UseWebGLTTS()
+		public static bool UseWebGLTTS()
 		{
 			Initialize();
 
@@ -4718,7 +4807,7 @@ namespace UAP
 		/// If you don't specify a parent, this function will recalculate ALL containers currently in the scene, which is considerably slower.
 		/// </summary>
 		/// <param name="parent"></param>
-		static public void RecalculateUIElementsOrder(GameObject parent = null)
+		public static void RecalculateUIElementsOrder(GameObject parent = null)
 		{
 			if (parent != null)
 			{
@@ -4741,7 +4830,7 @@ namespace UAP
 		/// The plugin will take care of loading and saving the speech rate.
 		/// </summary>
 		/// <returns>speech rate</returns>
-		static public int GetSpeechRate()
+		public static int GetSpeechRate()
 		{
 			Initialize();
 			return instance.m_AudioQueue.GetSpeechRate();
@@ -4756,7 +4845,7 @@ namespace UAP
 		/// The plugin will take care of loading and saving the speech rate.
 		/// </summary>
 		/// <returns>new speech rate</returns>
-		static public int SetSpeechRate(int speechRate)
+		public static int SetSpeechRate(int speechRate)
 		{
 			Initialize();
 			return instance.m_AudioQueue.SetSpeechRate(speechRate);
@@ -4764,7 +4853,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public void StopSpeaking()
+		public static void StopSpeaking()
 		{
 			Initialize();
 			instance.m_AudioQueue.Stop();
@@ -4857,7 +4946,7 @@ namespace UAP
 		/// </summary>
 		/// <param name="key"></param>
 		/// <returns></returns>
-		static public string Localize_Internal(string key)
+		public static string Localize_Internal(string key)
 		{
 			if (m_CurrentLocalizationTable == null)
 				return key;
@@ -4871,7 +4960,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static public bool IsVoiceOverAllowed()
+		public static bool IsVoiceOverAllowed()
 		{
 			if (instance == null)
 				return true;
@@ -4888,7 +4977,7 @@ namespace UAP
 		/// </summary>
 		/// <param name="intNumber"></param>
 		/// <returns></returns>
-		static public string FormatNumberToCurrentLocale(ulong intNumber)
+		public static string FormatNumberToCurrentLocale(ulong intNumber)
 		{
 			string formattedNumber;// = string.Format(CultureInfo.CurrentCulture, "{0:n0}", intNumber);
 			if (sIsEuropeanLanguage)
@@ -4899,7 +4988,7 @@ namespace UAP
 			return formattedNumber;
 		}
 		
-		static public string FormatNumberToCurrentLocale(double floatNumber)
+		public static string FormatNumberToCurrentLocale(double floatNumber)
 		{
 			string formattedNumber;// = string.Format(CultureInfo.CurrentCulture, "{0:n0}", intNumber);
 			if (sIsEuropeanLanguage)
@@ -4912,7 +5001,7 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		static private void DetectEuropeanLanguage()
+		private static void DetectEuropeanLanguage()
 		{
 			string language = m_CurrentLanguage.ToLower();
 			if (string.IsNullOrEmpty(language))
