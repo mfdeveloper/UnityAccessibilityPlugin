@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Packages/com.metalpopgames.uiaccessibility/Samples/MenuNavigation/MainMenu.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    path: Packages/com.metalpopgames.uiaccessibility/Samples/MenuNavigation/MenuMobile.unity
+    guid: f9e6d1cf821ab884486fcdfad58f0247
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 0476d30f862aa5d4f8776ab39ee11c8e, type: 2}
     com.unity.localization.settings: {fileID: 11400000, guid: 95d79ab9a34369f4dbec0caee478d644, type: 2}
