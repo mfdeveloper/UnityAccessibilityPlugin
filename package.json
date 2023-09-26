@@ -1,0 +1,24 @@
+{
+  "name": "com.metalpopgames.uiaccessibility.example-project",
+  "version": "0.0.1",
+  "description": "A example/demo project to develop and test the UIAccessibility plugin",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server ./Builds/WebGL -c-1 --gzip",
+    "start:ghpage": "http-server ./demo -c-1 --gzip",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mfdeveloper/UnityAccessibilityPlugin.git"
+  },
+  "author": "Felipe Ferreira",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mfdeveloper/UnityAccessibilityPlugin/issues"
+  },
+  "homepage": "https://github.com/mfdeveloper/UnityAccessibilityPlugin#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
