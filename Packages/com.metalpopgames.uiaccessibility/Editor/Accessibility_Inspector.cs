@@ -24,6 +24,10 @@ namespace UAP
 		private SerializedProperty m_DetectVoiceOverAtRuntime;
 		private SerializedProperty m_AllowVoiceOverGlobal;
 		private SerializedProperty m_AllowBuiltInVirtualKeyboard;
+		
+		// Mobile settings (only)
+		private SerializedProperty m_SwipeHorizontal;
+		private SerializedProperty m_SwipeVertical;
 
 		// Speech delays
 		private SerializedProperty m_HintDelay;
@@ -76,6 +80,9 @@ namespace UAP
 			m_CyclicMenus = serializedObject.FindProperty("m_CyclicMenus");
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
+			
+			m_SwipeHorizontal = serializedObject.FindProperty("m_SwipeHorizontal");
+			m_SwipeVertical = serializedObject.FindProperty("m_SwipeVertical");
 
 			m_HintDelay = serializedObject.FindProperty("m_HintDelay");
 			m_DisabledDelay = serializedObject.FindProperty("m_DisabledDelay");
@@ -256,11 +263,18 @@ namespace UAP
 					DrawWarningBox("Attention:\nOn Android players will need to re-enable TalkBack when they want to use an edit box. Afterwards TalkBack needs to be paused again.\nOn iOS, newer Unity versions often grab the focus away from the native on-screen keybaord, making input impossible. Make sure that this is really what you want.");
 
                 // TODO: Move this style to "Accessibility_InspectorShared" class
-                //		 and check why isn't applyied correctly in SetupGUIStyles() method
+                //		 and check why isn't applied correctly in SetupGUIStyles() method
                 var subSectionStyle = new GUIStyle(EditorStyles.boldLabel)
 				{
 					fontSize = 14
 				};
+                
+                EditorGUILayout.SelectableLabel("Mobile (only)", subSectionStyle);
+                
+                EditorGUILayout.LabelField(new GUIContent("Swipe", "Swipe UI directions settings"));
+                
+                m_SwipeHorizontal.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Horizontal (default)", "Allow swipe horizontally among items (default)"), m_SwipeHorizontal.boolValue);
+                m_SwipeVertical.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Vertical", "Force swipe vertically among items"), m_SwipeVertical.boolValue);
 
 				EditorGUILayout.SelectableLabel("Speech delays", subSectionStyle);
 

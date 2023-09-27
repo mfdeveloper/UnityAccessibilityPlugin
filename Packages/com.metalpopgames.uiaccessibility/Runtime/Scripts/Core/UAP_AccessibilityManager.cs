@@ -94,6 +94,10 @@ namespace UAP
 		public bool m_AllowBuiltInVirtualKeyboard = true;
 
 		public bool m_DebugOutput = false;
+		
+		// Mobile settings (only)
+		public bool m_SwipeHorizontal = true;
+		public bool m_SwipeVertical;
 
 		/// <value>How many seconds after selecting a UI element will the usage hint be triggered.</value>
 		public float m_HintDelay = HINT_DELAY_DEFAULT;
@@ -3465,6 +3469,16 @@ namespace UAP
 						{
 							if (dir == ESDirection.ERight)
 							{
+								if (!m_SwipeHorizontal)
+								{
+									PlaySFX(m_UIBoundsReached);
+									
+									ReadContainerName();
+									ReadItem(m_CurrentItem);
+
+									return;
+								}
+								
 								IncrementUIElement();
 								
 								m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
@@ -3472,6 +3486,16 @@ namespace UAP
 							}
 							else if (dir == ESDirection.ELeft)
 							{
+								if (!m_SwipeHorizontal)
+								{
+									PlaySFX(m_UIBoundsReached);
+									
+									ReadContainerName();
+									ReadItem(m_CurrentItem);
+
+									return;
+								}
+								
 								DecrementUIElement();
 								
 								m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
@@ -3480,18 +3504,26 @@ namespace UAP
 							else if (dir == ESDirection.EDown)
 							{
 								int currentContainerIndex = m_ActiveContainerIndex;
-								if (IncrementContainer(true))
+
+								if (m_SwipeVertical)
+								{
+									IncrementUIElement();
+								
+									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+								} else if (IncrementContainer(true))
 								{
 									UpdateCurrentItem(UAP_BaseElement.EHighlightSource.UserInput);
 									PlaySFX(m_UINavigationClick);
 									
 									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
-									m_OnSwipeHandler?.Invoke(dir, fingerCount);
 								}
 								else
 								{
 									PlaySFX(m_UIBoundsReached);
 								}
+								
+								m_OnSwipeHandler?.Invoke(dir, fingerCount);
+								
 								if (currentContainerIndex != m_ActiveContainerIndex)
 									ReadContainerName();
 								ReadItem(m_CurrentItem);
@@ -3499,18 +3531,26 @@ namespace UAP
 							else if (dir == ESDirection.EUp)
 							{
 								int currentContainerIndex = m_ActiveContainerIndex;
-								if (DecrementContainer(true))
+								
+								if (m_SwipeVertical)
+								{
+									DecrementUIElement();
+								
+									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
+								} else if (DecrementContainer(true))
 								{
 									UpdateCurrentItem(UAP_BaseElement.EHighlightSource.UserInput);
 									PlaySFX(m_UINavigationClick);
 									
 									m_OnMobileElementChangeHandler?.Invoke(dir, fingerCount);
-									m_OnSwipeHandler?.Invoke(dir, fingerCount);
 								}
 								else
 								{
 									PlaySFX(m_UIBoundsReached);
 								}
+								
+								m_OnSwipeHandler?.Invoke(dir, fingerCount);
+								
 								if (currentContainerIndex != m_ActiveContainerIndex)
 									ReadContainerName();
 								ReadItem(m_CurrentItem);
