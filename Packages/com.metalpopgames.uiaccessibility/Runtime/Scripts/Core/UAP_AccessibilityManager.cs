@@ -195,7 +195,10 @@ namespace UAP
 		public AudioSource m_AudioPlayer = null;
 		public AudioSource m_SFXPlayer = null;
 		public RectTransform m_Frame = null;
+		public RectTransform m_FrameSelected = null;
 		public GameObject m_FrameTemplate = null;
+		[Tooltip("Additional prefab to be instantiated and fill a highlighted item")]
+		public GameObject m_FrameSelectedTemplate = null;
 		public GameObject m_TouchBlocker = null;
 		public Text m_DebugOutputLabel = null;
 
@@ -864,10 +867,15 @@ namespace UAP
 		{
 			if (instance.m_Frame == null)
 			{
-				GameObject newFrame = Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform) as GameObject;
-				instance.m_Frame = (newFrame).transform as RectTransform;
+				GameObject newFrame = Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform);
+				instance.m_Frame = newFrame.transform as RectTransform;
 
 				//Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform);
+			}
+			
+			if (instance.m_FrameSelected == null && instance.m_FrameSelectedTemplate != null)
+			{
+				instance.m_FrameSelected = instance.m_FrameSelectedTemplate.transform as RectTransform;
 			}
 
 	#if ACCESS_NGUI
@@ -915,18 +923,22 @@ namespace UAP
 					instance.m_NGUIItemFrame.height = Mathf.CeilToInt(objectHeight);
 				}
 	#else
-				instance.m_Frame.gameObject.SetActive(true);
-				instance.m_Frame.transform.SetParent(instance.m_TouchBlocker.transform);
-				instance.m_Frame.position = screenPos;
-				instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, base3DElement.GetPixelHeight());
-				instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, base3DElement.GetPixelWidth());
+				if (instance.m_Frame != null)
+				{
+					instance.m_Frame.gameObject.SetActive(true);
+					instance.m_Frame.transform.SetParent(instance.m_TouchBlocker.transform);
+					instance.m_Frame.position = screenPos;
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, base3DElement.GetPixelHeight());
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, base3DElement.GetPixelWidth());
+				}
+				
 	#endif
 				return;
 			}
 
 			RectTransform rect = GetElementRect(ref element);
 			// Place the frame around the element
-			if (rect != null)
+			if (rect != null && instance.m_Frame != null)
 			{
 				instance.m_Frame.gameObject.SetActive(true);
 
@@ -949,6 +961,23 @@ namespace UAP
 					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.height);
 					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width);
 				}
+
+				if (instance.m_FrameSelected != null)
+				{
+					element.m_Object.UpdateElementFrame(instance.m_FrameSelected, rect);
+					// instance.m_FrameSelected.gameObject.SetActive(true);
+					//
+					// if (instance.m_FrameSelected.transform.parent != rect.transform)
+					// {
+					// 	instance.m_FrameSelected.transform.SetParent(rect.transform, false);
+					// 	instance.m_FrameSelected.anchoredPosition3D = Vector3.zero;
+					// 	instance.m_FrameSelected.localScale = Vector3.one;
+					// }
+					//
+					// instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.height);
+					// instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width);
+				}
+				
 				/*
 				else
 				{
@@ -1063,6 +1092,13 @@ namespace UAP
 
 			if (instance.m_Frame != null && instance.m_Frame.gameObject != null)
 				instance.m_Frame.gameObject.SetActive(false);
+
+			if (instance.m_FrameSelected != null 
+			    && instance.m_FrameSelected.gameObject != null 
+			    && instance.m_FrameSelected.gameObject.activeInHierarchy)
+			{
+				instance.m_FrameSelected.gameObject.SetActive(false);
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////

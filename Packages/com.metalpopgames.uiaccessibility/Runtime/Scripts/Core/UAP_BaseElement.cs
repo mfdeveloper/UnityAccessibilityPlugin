@@ -749,5 +749,19 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
+		public virtual void UpdateElementFrame(RectTransform frameSelected, RectTransform elementRect)
+		{
+			frameSelected.gameObject.SetActive(true);
+			
+			if (frameSelected.transform.parent != elementRect.transform)
+			{
+				frameSelected.transform.SetParent(elementRect.transform, false);
+				frameSelected.anchoredPosition3D = Vector3.zero;
+				frameSelected.localScale = Vector3.one;
+			}
+			
+			frameSelected.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, elementRect.rect.height);
+			frameSelected.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, elementRect.rect.width);	
+		}
 	}
 }

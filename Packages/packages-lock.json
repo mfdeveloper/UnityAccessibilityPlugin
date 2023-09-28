@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.benoitfreslon.vibration": {
-      "version": "https://github.com/mfdeveloper/Vibration.git#v0.1.0",
+      "version": "https://github.com/mfdeveloper/Vibration.git#0.1.0",
       "depth": 0,
       "source": "git",
       "dependencies": {},
@@ -11,7 +11,9 @@
       "version": "file:com.metalpopgames.uiaccessibility",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.benoitfreslon.vibration": "0.1.0"
+      }
     },
     "com.metalpopgames.uiaccessibility.unity-localization": {
       "version": "file:com.metalpopgames.uiaccessibility.unity-localization",

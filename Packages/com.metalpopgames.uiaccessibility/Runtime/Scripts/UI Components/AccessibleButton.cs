@@ -1,12 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics.CodeAnalysis;
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UAP.Entities;
 
 namespace UAP
 {
 	[AddComponentMenu("Accessibility/UI/Accessible Button")]
-	public class AccessibleButton : UAP_BaseElement
+	[SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+	public class AccessibleButton : UAP_BaseElement, ISelectHandler, IDeselectHandler
 	{
+		
+		protected Text frameSelectedText;
+		protected Text buttonText;
+		protected TextValues originTextValues = new();
+		protected Button btn;
 
 		//////////////////////////////////////////////////////////////////////////
 
@@ -17,14 +25,58 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
+		#region Unity Events
+		
+		protected virtual void Awake()
+		{
+			InitComponents();
+		}
+
+		public virtual void OnSelect(BaseEventData eventData)
+		{
+			// --- Change Text style ---
+			if (frameSelectedText == null)
+			{
+				return;
+			}
+			
+			buttonText = buttonText == null ? eventData.selectedObject.GetComponentInChildren<Text>() : buttonText;
+			if (buttonText != null)
+			{
+				if (originTextValues.Color == Color.clear)
+				{
+					originTextValues.Color = buttonText.color;
+				}
+			}
+			
+			buttonText.color = frameSelectedText.color;
+		}
+
+		public virtual void OnDeselect(BaseEventData eventData)
+		{
+			buttonText = buttonText == null ? eventData.selectedObject.GetComponentInChildren<Text>() : buttonText;
+			if (buttonText != null && originTextValues.Color != Color.clear)
+			{
+				buttonText.color = originTextValues.Color;
+			}
+		}
+		
+		#endregion
+		
 		protected override void OnInteract()
 		{
 			// Press button (works for UGUI and TMP)
-			Button button = GetButton();
+			Button button = GetButton(forceFetchInactive: true);
 			if (button != null)
 			{
 				var pointer = new PointerEventData(EventSystem.current); // pointer event for Execute
+				
 				button.OnPointerClick(pointer);
+				
+				// PS: That "IDeselectHandler.OnDeselect()" event could be triggered in a override method of "base.OnInteractEnd()"
+				// but won't be called if inside of any click handler of this button there is at least an action
+				// that disables this gameObject :(
+				OnDeselect(pointer);
 				return;
 			}
 
@@ -75,15 +127,27 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
-		private Button GetButton()
+		protected virtual void InitComponents()
 		{
-			Button refButton = null;
-			if (m_ReferenceElement != null && m_ReferenceElement.activeInHierarchy)
-				refButton = m_ReferenceElement.GetComponent<Button>();
-			if (refButton == null && gameObject.activeInHierarchy)
-				refButton = gameObject.GetComponent<Button>();
+			buttonText = GetComponentInChildren<Text>();
+			
+			// Cache Button component in "btn" field
+			GetButton();
+		}
+		
+		private Button GetButton(bool forceFetchInactive = false)
+		{
+			if (!forceFetchInactive && btn != null)
+			{
+				return btn;
+			}
+			
+			if (m_ReferenceElement != null)
+				btn = forceFetchInactive && m_ReferenceElement.activeInHierarchy ? m_ReferenceElement.GetComponentInChildren<Button>(true) : m_ReferenceElement.GetComponent<Button>();
+			if (btn == null)
+				btn = forceFetchInactive && gameObject.activeInHierarchy ? gameObject.GetComponentInChildren<Button>(true) : gameObject.GetComponent<Button>();
 
-			return refButton;
+			return btn;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -344,5 +408,60 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
+		public override void UpdateElementFrame(RectTransform frameSelected, RectTransform elementRect)
+		{
+			var frameSpriteRenderer = frameSelected.GetComponentInChildren<SpriteRenderer>();
+			var frameButton = frameSelected.GetComponentInChildren<Button>(true);
+			frameSelectedText = frameSelected.GetComponentInChildren<Text>(true);
+			
+			var button = GetButton();
+			
+			if (button == null)
+			{
+				return;
+			}
+			
+			var spriteState = button.spriteState;
+			ColorBlock colors = new()
+			{
+				selectedColor = Color.clear
+			};
+			
+			// --- Change Button: Sprite or Color ---
+			if (frameButton != null)
+			{
+				switch (frameButton.transition)
+				{
+					case Selectable.Transition.SpriteSwap:
+						spriteState.selectedSprite = frameButton.spriteState.selectedSprite;
+						break;
+					case Selectable.Transition.ColorTint:
+						colors = frameButton.colors;
+						break;
+				}
+			}
+			else if (frameSpriteRenderer != null || frameSpriteRenderer.sprite != null)
+			{
+				spriteState.selectedSprite = frameSpriteRenderer.sprite;
+			}
+
+			if (spriteState.selectedSprite != null)
+			{
+				if (button.transition != Selectable.Transition.SpriteSwap)
+				{
+					button.transition = Selectable.Transition.SpriteSwap;
+				}
+				
+				button.spriteState = spriteState;
+			} else if (colors.selectedColor != Color.clear)
+			{
+				var buttonColors = button.colors;
+				buttonColors.selectedColor = colors.selectedColor;
+
+				button.colors = buttonColors;
+			}
+			
+			button.Select();
+		}
 	}
 }

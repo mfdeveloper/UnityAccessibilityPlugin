@@ -25,6 +25,9 @@ namespace UAP
 		private SerializedProperty m_AllowVoiceOverGlobal;
 		private SerializedProperty m_AllowBuiltInVirtualKeyboard;
 		
+		// UI general elements
+		private SerializedProperty m_FrameSelectedTemplate;
+		
 		// Mobile settings (only)
 		private SerializedProperty m_SwipeHorizontal;
 		private SerializedProperty m_SwipeVertical;
@@ -80,6 +83,8 @@ namespace UAP
 			m_CyclicMenus = serializedObject.FindProperty("m_CyclicMenus");
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
+			
+			m_FrameSelectedTemplate = serializedObject.FindProperty("m_FrameSelectedTemplate");
 			
 			m_SwipeHorizontal = serializedObject.FindProperty("m_SwipeHorizontal");
 			m_SwipeVertical = serializedObject.FindProperty("m_SwipeVertical");
@@ -269,10 +274,13 @@ namespace UAP
 					fontSize = 14
 				};
                 
+                EditorGUILayout.SelectableLabel("UI Elements", subSectionStyle);
+
+                EditorGUILayout.ObjectField(m_FrameSelectedTemplate);
+                
                 EditorGUILayout.SelectableLabel("Mobile (only)", subSectionStyle);
                 
                 EditorGUILayout.LabelField(new GUIContent("Swipe", "Swipe UI directions settings"));
-                
                 m_SwipeHorizontal.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Horizontal (default)", "Allow swipe horizontally among items (default)"), m_SwipeHorizontal.boolValue);
                 m_SwipeVertical.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Vertical", "Force swipe vertically among items"), m_SwipeVertical.boolValue);
 
