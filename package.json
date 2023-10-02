@@ -1,0 +1,47 @@
+{
+	"name": "com.metalpopgames.uiaccessibility",
+	"displayName": "UI Accessibility Plugin (UAP)",
+	"version": "1.1.8",
+	"unity": "2017.4",
+	"description": "The UI Accessibility Plugin (UAP) allows you to make your UI accessible to blind and visually impaired players with only a few clicks",
+    "documentationUrl": "http://www.metalpopgames.com/assetstore/accessibility/doc/index.html",
+	"dependencies": {
+		"com.benoitfreslon.vibration": "0.1.0"
+	},
+    "author": {
+        "name": "MetalPop Games",
+        "url": "http://www.icodelikeagirl.com"
+    },
+	"samples": [
+		{
+			"displayName": "3D Objects Example",
+			"description": "Accessibility navigation with 3D objects",
+			"path": "Samples~/3DObjectsExample"
+		},
+		{
+			"displayName": "3D UI Example",
+			"description": "Accessibility navigation with 3D UI elements",
+			"path": "Samples~/3DUIExample"
+		},
+		{
+			"displayName": "Match 3 Game Example",
+			"description": "Complete accessible Match 3 game which demonstrates the use of the plugin",
+			"path": "Samples~/Match3GameExample"
+		},
+		{
+			"displayName": "Menu Navigation",
+			"description": "A simple UI menu navigation with volume slider controls",
+			"path": "Samples~/MenuNavigation"
+		},
+		{
+			"displayName": "TextMeshPro Example",
+			"description": "Sample using TextMeshPro Unity feature (Requires Unity 2020+)",
+			"path": "Samples~/TextMeshPro Example"
+		},
+		{
+			"displayName": "UI Navigation Example",
+			"description": "UI Navigation menu items example",
+			"path": "Samples~/UINavigationExample"
+		}
+	]
+}
