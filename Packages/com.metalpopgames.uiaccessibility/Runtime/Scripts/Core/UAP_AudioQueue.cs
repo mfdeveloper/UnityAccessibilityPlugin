@@ -411,7 +411,7 @@ namespace UAP
 
 		void StopAudio(bool includingAndroid = false)
 		{
-			if (m_AudioPlayer.isPlaying)
+			if (m_AudioPlayer != null && m_AudioPlayer.isPlaying)
 			{
 				m_AudioPlayer.Stop();
 				m_AudioPlayer.clip = null;

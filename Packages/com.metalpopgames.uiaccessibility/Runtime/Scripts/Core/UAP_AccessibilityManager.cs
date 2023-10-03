@@ -38,6 +38,12 @@ namespace UAP
 		//////////////////////////////////////////////////////////////////////////
 
 		/// <summary>
+		/// Enable/Disable usage of <see cref="Object.DontDestroyOnLoad"/> that manage whether
+		/// should persists an instance of this object among scenes.
+		/// </summary>
+		public bool m_DontDestroyOnLoad = true;
+		
+		/// <summary>
 		/// The state for accessibility on the very first launch of your app.
 		/// Leave this at false unless this is an app purely for the sight impaired.
 		/// </summary>
@@ -401,8 +407,12 @@ namespace UAP
 		void Start()
 		{
 			Initialize();
-			DontDestroyOnLoad(gameObject);
-			SceneManager.sceneLoaded += OnSceneLoaded;
+			if (m_DontDestroyOnLoad)
+			{
+				DontDestroyOnLoad(gameObject);
+			}
+			
+			SceneManager.sceneLoaded += OnSceneLoaded; 
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -411,6 +421,8 @@ namespace UAP
 		{
 			if (instance == this)
 				isDestroyed = true;
+
+			m_IsInitialized = false;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -631,6 +643,15 @@ namespace UAP
 			m_SuspendedActiveContainerIndex.Clear();
 			m_AudioQueue.Stop();
 			m_CurrentItem = null;
+
+			if (!m_DontDestroyOnLoad)
+			{
+				isDestroyed = false;
+				m_IsInitialized = false;
+				m_IsEnabled = true;
+
+				SceneManager.sceneLoaded -= OnSceneLoaded;
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -825,7 +846,8 @@ namespace UAP
 
 			UpdateElementFrame(ref element);
 
-			if (instance.m_CurrentItem != null
+			if (instance.m_WindowsUseKeys
+				&& instance.m_CurrentItem != null
 				&& !instance.m_CurrentItem.m_Object.IsInteractable()
 				&& instance.m_CurrentItem.m_Object.m_SkipIfDisabled)
 			{
@@ -869,8 +891,6 @@ namespace UAP
 			{
 				GameObject newFrame = Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform);
 				instance.m_Frame = newFrame.transform as RectTransform;
-
-				//Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform);
 			}
 			
 			if (instance.m_FrameSelected == null && instance.m_FrameSelectedTemplate != null)
@@ -962,20 +982,9 @@ namespace UAP
 					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width);
 				}
 
-				if (instance.m_FrameSelected != null)
+				if (instance.m_FrameSelected != null && element.m_Object.IsInteractable())
 				{
 					element.m_Object.UpdateElementFrame(instance.m_FrameSelected, rect);
-					// instance.m_FrameSelected.gameObject.SetActive(true);
-					//
-					// if (instance.m_FrameSelected.transform.parent != rect.transform)
-					// {
-					// 	instance.m_FrameSelected.transform.SetParent(rect.transform, false);
-					// 	instance.m_FrameSelected.anchoredPosition3D = Vector3.zero;
-					// 	instance.m_FrameSelected.localScale = Vector3.one;
-					// }
-					//
-					// instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.height);
-					// instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width);
 				}
 				
 				/*
@@ -2452,13 +2461,19 @@ namespace UAP
 				// If 2 or more fingers are on screen, stop everything.
 				if (touchCount > 1)
 				{
-					m_AudioQueue.StopAllInterruptibles();
+					if (m_AudioQueue != null)
+					{
+						m_AudioQueue.StopAllInterruptibles();
+					}
 				}
 				else if (touchCount == 1)
 				{
 					// if only 1 finger touches the screen, only interrupt the currently playing game announcement
 					// (if any, and only if interruptible)
-					m_AudioQueue.InterruptAppAnnouncement();
+					if (m_AudioQueue != null)
+					{
+						m_AudioQueue.InterruptAppAnnouncement();
+					}
 				}
 			}
 
@@ -2481,7 +2496,7 @@ namespace UAP
 
 
 			// Detect if the user is touching the screen in any way. If so, stop
-			if (m_ContinuousReading && !m_ContinuousReading_WaitInputClear)
+			if (m_WindowsUseKeys && m_ContinuousReading && !m_ContinuousReading_WaitInputClear)
 			{
 	#if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBGL
 				// Any mouse or key press cancels continuous reading
@@ -2496,7 +2511,7 @@ namespace UAP
 
 			// Don't interrupt continuous reading because the user didn't lift their
 			// finger fast enough. Wait for all input to clear first
-			if (m_ContinuousReading_WaitInputClear)
+			if (m_WindowsUseKeys && m_ContinuousReading_WaitInputClear)
 			{
 	#if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBGL
 				// Any mouse or key press cancels continuous reading

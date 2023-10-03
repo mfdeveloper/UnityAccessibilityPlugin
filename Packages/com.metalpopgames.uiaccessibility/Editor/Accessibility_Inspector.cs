@@ -10,6 +10,7 @@ namespace UAP
 		static Texture m_LogoTexture = null;
 
 		// Enabling
+		private SerializedProperty m_DontDestroyOnLoad;
 		private SerializedProperty m_DefaultState;
 		private SerializedProperty m_AutoTurnOnIfScreenReaderDetected;
 		private SerializedProperty m_SaveEnabledState;
@@ -19,6 +20,7 @@ namespace UAP
 		private SerializedProperty m_HandleMagicGestures;
 		private SerializedProperty m_ExploreByTouch;
 		private SerializedProperty m_MouseSwipes;
+		private SerializedProperty m_UseKeyboardKeys;
 		private SerializedProperty m_ReadDisabledInteractables;
 		private SerializedProperty m_CyclicMenus;
 		private SerializedProperty m_DetectVoiceOverAtRuntime;
@@ -66,6 +68,7 @@ namespace UAP
 		{
 			base.OnEnable();
 			
+			m_DontDestroyOnLoad = serializedObject.FindProperty("m_DontDestroyOnLoad");
 			m_DefaultState = serializedObject.FindProperty("m_DefaultState");
 			m_AutoTurnOnIfScreenReaderDetected = serializedObject.FindProperty("m_AutoTurnOnIfScreenReaderDetected");
 			m_SaveEnabledState = serializedObject.FindProperty("m_SaveEnabledState");
@@ -79,6 +82,7 @@ namespace UAP
 			m_HandleMagicGestures = serializedObject.FindProperty("m_HandleMagicGestures");
 			m_ExploreByTouch = serializedObject.FindProperty("m_ExploreByTouch");
 			m_MouseSwipes = serializedObject.FindProperty("m_WindowsUseMouseSwipes");
+			m_UseKeyboardKeys = serializedObject.FindProperty("m_WindowsUseKeys");
 			m_ReadDisabledInteractables = serializedObject.FindProperty("m_ReadDisabledInteractables");
 			m_CyclicMenus = serializedObject.FindProperty("m_CyclicMenus");
 			m_AllowVoiceOverGlobal = serializedObject.FindProperty("m_AllowVoiceOverGlobal");
@@ -167,6 +171,7 @@ namespace UAP
 			DrawSectionHeader("Turn On/Off Accessibility", true);
 			//EditorGUILayout.PropertyField(m_DefaultState, new GUIContent("Enabled on App Install", "Default: Off\nDetermines whether accessibility should be on or off when the user installs the app for the first time. If Auto Enable is on, this can usually be left off."), GUILayout.ExpandWidth(true));
 			//EditorGUILayout.PropertyField(m_AutoTurnOnIfScreenReaderDetected, new GUIContent("Auto-Enable if screen reader detected", "Default: On\nThe plugin can detect whether screen reader software is running on the target platform (TalkBack, VoiceOver, NVDA, etc) and turn on automatically if that is the case."));
+			m_DontDestroyOnLoad.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Persist that gameObject among scenes", "Determines whether this game object should be destroyed after load another Scene or not"), m_DontDestroyOnLoad.boolValue);
 			m_DefaultState.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Enabled after app install", "Determines whether accessibility should be on or off when the user installs the app for the first time. If Auto Enable is on, this can usually be left off."), m_DefaultState.boolValue);
 			if (m_DefaultState.boolValue)
 				DrawWarningBox("Are you sure?\nIf this is on then all users, including sighted ones, will start the app with accessibility mode enabled.");
@@ -251,6 +256,11 @@ namespace UAP
 				m_ExploreByTouch.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Explore By Touch", "If true (Default) the plugin reads out the UI element that is under the user's finger. If 'Handle UI' is not active, this setting will be ignored."), m_ExploreByTouch.boolValue);
 				m_MouseSwipes.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Mouse Swiping", "Default is false.. If true, the plugin reads mouse swipes as finger swipes. Using the ALT key emulates two finger swipes.\nThis is very useful if developing a mobile application, but probably undesirable in a Desktop app."), m_MouseSwipes.boolValue);
 				EditorGUILayout.Separator();
+				
+				m_UseKeyboardKeys.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Use Keyboard Keys", "If true (Default), the PC keyboard input will be enabled."), m_UseKeyboardKeys.boolValue);
+				
+				EditorGUILayout.Separator();
+				
 				m_HandleMagicGestures.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Magic Gestures", "If true (Default), the plugin will recognize magic gestures for functions like Back, Exit and Pause, and call the appropriate callbacks to your game."), m_HandleMagicGestures.boolValue);
 				if (!m_HandleMagicGestures.boolValue)
 					DrawErrorBox("Are you sure?\nYou don't need to subscribe to any events.\nBut disabling this also takes away the player's ability to enable/disable accessibility with a finger gesture.");
