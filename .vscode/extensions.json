@@ -1,6 +1,7 @@
 {
     "recommendations": [
         "pkief.material-icon-theme",
+        "wayou.vscode-todo-highlight",
         "fernandoescolar.vscode-solution-explorer",
         "ms-dotnettools.csharp",
         "visualstudiotoolsforunity.vstuc",

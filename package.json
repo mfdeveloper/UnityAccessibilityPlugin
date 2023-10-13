@@ -6,11 +6,13 @@
   "scripts": {
     "start": "http-server ./Builds/WebGL -c-1 --gzip",
     "start:ghpage": "http-server ./demo -c-1 --gzip",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish:package": "dotenv bash ./.github/scripts/functions.sh localPublish Packages/com.metalpopgames.uiaccessibility",
+    "publish:package-localization": "dotenv bash ./.github/scripts/functions.sh localPublish Packages/com.metalpopgames.uiaccessibility.unity-localization"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mfdeveloper/UnityAccessibilityPlugin.git"
+    "url": "https://github.com/mfdeveloper/UnityAccessibilityPlugin.git"
   },
   "author": "Felipe Ferreira",
   "license": "MIT",
@@ -19,6 +21,7 @@
   },
   "homepage": "https://github.com/mfdeveloper/UnityAccessibilityPlugin#readme",
   "devDependencies": {
+    "dotenv-cli": "^7.3.0",
     "http-server": "^14.1.1"
   }
 }
