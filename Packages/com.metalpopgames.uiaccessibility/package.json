@@ -1,7 +1,7 @@
 {
 	"name": "com.metalpopgames.uiaccessibility",
 	"displayName": "UI Accessibility Plugin (UAP)",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"unity": "2017.4",
 	"description": "The UI Accessibility Plugin (UAP) allows you to make your UI accessible to blind and visually impaired players with only a few clicks",
     "documentationUrl": "http://www.metalpopgames.com/assetstore/accessibility/doc/index.html",
