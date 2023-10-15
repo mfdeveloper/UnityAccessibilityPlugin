@@ -14,3 +14,7 @@ NativeProjects/*
 .env.test.local
 .env.production.local
 .env.local
+
+# Node npm files
+node_modules.meta
+package-lock.json.meta
