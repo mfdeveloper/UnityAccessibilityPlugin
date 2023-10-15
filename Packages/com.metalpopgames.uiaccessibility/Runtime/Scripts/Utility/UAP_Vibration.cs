@@ -1,6 +1,9 @@
 using UnityEngine;
+
+#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 using VibrationPlugin;
 using VibrationPlugin.Enums;
+#endif
 
 namespace UAP
 {
@@ -9,9 +12,13 @@ namespace UAP
     {
 
         #region Unity Events
-
+        
+        #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+        
         [SerializeField]
         protected VibrationComponent vibration;
+
+        #endif
 
         protected void Awake() 
         {
@@ -41,20 +48,36 @@ namespace UAP
 
         protected virtual void InitComponents()
         {
+            #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+            
             if (vibration == null)
             {
                 vibration = GetComponent<VibrationComponent>();
             }
+
+            #endif
         }
         private void OnSwipe(UAP_AccessibilityManager.ESDirection? direction, float fingerCount)
         {
+            #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+            
             vibration.Vibrate();
+
+            #endif
         }
     
         private bool OnTouchExploreStart(float fingerCount)
         {
+            #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
+            
             vibration.Vibrate(vibrationType: VibrationType.DoubleTap);
             return true;
+
+            #else
+
+            return false;
+
+            #endif
         }
 
         #endregion

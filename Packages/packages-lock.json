@@ -1,11 +1,11 @@
 {
   "dependencies": {
     "com.benoitfreslon.vibration": {
-      "version": "https://github.com/mfdeveloper/Vibration.git#0.1.0",
+      "version": "0.1.5",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {},
-      "hash": "4c3975c0a270344f7c1d5a47658935225686cc51"
+      "url": "https://package.openupm.com"
     },
     "com.metalpopgames.uiaccessibility": {
       "version": "file:com.metalpopgames.uiaccessibility",
