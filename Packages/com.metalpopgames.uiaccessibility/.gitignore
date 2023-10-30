@@ -295,5 +295,9 @@ dist
 # Custom.gitignore
 # ---------------------
 
+# Unity Test tools scenes
+InitTestScene*
+
+# Node npm files
 node_modules.meta
 package-lock.json.meta

@@ -1,9 +1,6 @@
 using UnityEngine;
-
-#if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
 using VibrationPlugin;
 using VibrationPlugin.Enums;
-#endif
 
 namespace UAP
 {
@@ -13,12 +10,8 @@ namespace UAP
 
         #region Unity Events
         
-        #if UNITY_EDITOR || UNITY_ANDROID || UNITY_IOS || UNITY_WEBGL
-        
         [SerializeField]
         protected VibrationComponent vibration;
-
-        #endif
 
         protected void Awake() 
         {

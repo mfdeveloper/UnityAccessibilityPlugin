@@ -420,7 +420,10 @@ namespace UAP
 		void OnDestroy()
 		{
 			if (instance == this)
+			{
 				isDestroyed = true;
+				instance = null;
+			}
 
 			m_IsInitialized = false;
 		}
@@ -4557,11 +4560,20 @@ namespace UAP
 			instance.m_OnMobileElementChangeHandler += func;
 		}
 		
+		/// <summary>
+		/// Unregister callback previously subscribed to delegate <see cref="m_OnMobileElementChangeHandler"/>
+		/// </summary>
+		/// <remarks>
+		/// <b> PS: </b> Unregister can be called from `MonoBehaviour.OnDisable` or `MonoBehaviour.OnDestroy`, and the <see cref="instance"/>
+		/// can be `null` in that case. We shouldn't call <see cref="Initialize"/> method on it.
+		/// </remarks>
+		/// <param name="func">The <see cref="OnMobileElementChangeEvent"/> delegate callback to be subscribed in <see cref="m_OnMobileElementChangeHandler"/></param>
 		public static void UnregisterOnMobileChangeElementCallback(OnMobileElementChangeEvent func)
 		{
-			Initialize();
-
-			instance.m_OnMobileElementChangeHandler -= func;
+			if (instance != null)
+			{
+				instance.m_OnMobileElementChangeHandler -= func;
+			}
 		}
 		
 		public static void RegisterOnTouchExploreActiveCallback(OnTouchExploreActiveEvent func)
@@ -4571,11 +4583,20 @@ namespace UAP
 			instance.m_OnTouchExploreActiveHandler += func;
 		}
 		
+		/// <summary>
+		/// Unregister callback previously subscribed to delegate <see cref="m_OnTouchExploreActiveHandler"/>
+		/// </summary>
+		/// <remarks>
+		/// <b> PS: </b> Unregister can be called from `MonoBehaviour.OnDisable` or `MonoBehaviour.OnDestroy`, and the <see cref="instance"/>
+		/// can be `null` in that case. We shouldn't call <see cref="Initialize"/> method on it.
+		/// </remarks>
+		/// <param name="func">The <see cref="OnTouchExploreActiveEvent"/> delegate callback to be subscribed in <see cref="m_OnTouchExploreActiveHandler"/></param>
 		public static void UnregisterOnTouchExploreActiveCallback(OnTouchExploreActiveEvent func)
 		{
-			Initialize();
-
-			instance.m_OnTouchExploreActiveHandler -= func;
+			if (instance != null)
+			{
+				instance.m_OnTouchExploreActiveHandler -= func;
+			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////
