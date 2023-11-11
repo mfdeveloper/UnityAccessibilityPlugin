@@ -32,6 +32,11 @@ namespace UAP
 			InitComponents();
 		}
 
+		private void OnDisable()
+		{
+			RestoreTextColor();
+		}
+
 		public virtual void OnSelect(BaseEventData eventData)
 		{
 			// --- Change Text style ---
@@ -40,7 +45,7 @@ namespace UAP
 				return;
 			}
 			
-			buttonText = buttonText == null ? eventData.selectedObject.GetComponentInChildren<Text>() : buttonText;
+			buttonText = GetText(eventData);
 			if (buttonText != null)
 			{
 				if (originTextValues.Color == Color.clear)
@@ -54,13 +59,9 @@ namespace UAP
 
 		public virtual void OnDeselect(BaseEventData eventData)
 		{
-			buttonText = buttonText == null ? eventData.selectedObject.GetComponentInChildren<Text>() : buttonText;
-			if (buttonText != null && originTextValues.Color != Color.clear)
-			{
-				buttonText.color = originTextValues.Color;
-			}
+			RestoreTextColor(eventData);
 		}
-		
+
 		#endregion
 		
 		protected override void OnInteract()
@@ -135,6 +136,28 @@ namespace UAP
 			GetButton();
 		}
 		
+		protected virtual void RestoreTextColor(BaseEventData eventData = null)
+		{
+			buttonText = GetText(eventData);
+			if (buttonText != null && originTextValues.Color != Color.clear)
+			{
+				buttonText.color = originTextValues.Color;
+			}
+		}
+		
+		protected virtual Text GetText(BaseEventData eventData = null)
+		{
+			if (buttonText != null)
+			{
+				return buttonText;
+			}
+			
+			var currentObj = eventData != null ? eventData.selectedObject : gameObject;
+			buttonText = buttonText == null ? currentObj.GetComponentInChildren<Text>() : buttonText;
+			
+			return buttonText;
+		}
+		
 		private Button GetButton(bool forceFetchInactive = false)
 		{
 			if (!forceFetchInactive && btn != null)
@@ -149,6 +172,7 @@ namespace UAP
 
 			return btn;
 		}
+
 
 		//////////////////////////////////////////////////////////////////////////
 
