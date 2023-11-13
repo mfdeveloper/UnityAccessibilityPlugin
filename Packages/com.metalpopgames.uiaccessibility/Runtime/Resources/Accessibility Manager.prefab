@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd9e42417444b96439dd7aeff0814d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DontDestroyOnLoad: 1
+  m_PersistAmongScenes: 1
   m_DefaultState: 1
   m_AutoTurnOnIfScreenReaderDetected: 1
   m_RecheckAutoEnablingOnResume: 0

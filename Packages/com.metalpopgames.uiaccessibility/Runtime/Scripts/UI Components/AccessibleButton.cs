@@ -70,14 +70,15 @@ namespace UAP
 			Button button = GetButton(forceFetchInactive: true);
 			if (button != null)
 			{
-				var pointer = new PointerEventData(EventSystem.current); // pointer event for Execute
+				// pointer event for Execute
+				var eventData = new PointerEventData(EventSystem.current);
 				
-				button.OnPointerClick(pointer);
+				button.OnPointerClick(eventData);
 				
 				// PS: That "IDeselectHandler.OnDeselect()" event could be triggered in a override method of "base.OnInteractEnd()"
 				// but won't be called if inside of any click handler of this button there is at least an action
 				// that disables this gameObject :(
-				OnDeselect(pointer);
+				OnDeselect(eventData);
 				return;
 			}
 
@@ -421,7 +422,8 @@ namespace UAP
 			Button button = GetButton();
 			if (button != null)
 			{
-				var pointer = new PointerEventData(EventSystem.current); // pointer event for Execute
+				// pointer event for Execute
+				var pointer = new PointerEventData(EventSystem.current);
 				if (enable)
 					button.OnPointerEnter(pointer);
 				else
@@ -434,10 +436,6 @@ namespace UAP
 
 		public override void UpdateElementFrame(RectTransform frameSelected, RectTransform elementRect)
 		{
-			var frameSpriteRenderer = frameSelected.GetComponentInChildren<SpriteRenderer>();
-			var frameButton = frameSelected.GetComponentInChildren<Button>(true);
-			frameSelectedText = frameSelected.GetComponentInChildren<Text>(true);
-			
 			var button = GetButton();
 			
 			if (button == null)
@@ -445,7 +443,11 @@ namespace UAP
 				return;
 			}
 			
+			var frameSpriteRenderer = frameSelected.GetComponentInChildren<SpriteRenderer>();
+			var frameButton = frameSelected.GetComponentInChildren<Button>(true);
+			frameSelectedText = frameSelected.GetComponentInChildren<Text>(true);
 			var spriteState = button.spriteState;
+			
 			ColorBlock colors = new()
 			{
 				selectedColor = Color.clear

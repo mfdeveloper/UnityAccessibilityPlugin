@@ -3,7 +3,6 @@
 
 #define IOS_USENATIVESWIPES
 
-using System.Collections.Concurrent;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -38,10 +37,10 @@ namespace UAP
 		//////////////////////////////////////////////////////////////////////////
 
 		/// <summary>
-		/// Enable/Disable usage of <see cref="Object.DontDestroyOnLoad"/> that manage whether
-		/// should persists an instance of this object among scenes.
+		/// Whether should persists an instance of this object
+		/// and field values among scenes.
 		/// </summary>
-		public bool m_DontDestroyOnLoad = true;
+		public bool m_PersistAmongScenes = true;
 		
 		/// <summary>
 		/// The state for accessibility on the very first launch of your app.
@@ -391,8 +390,25 @@ namespace UAP
 			// Only one accessibility manager can exist
 			if (instance != this && instance != null)
 			{
-				Log("Found another UAP Accessibility Manager in the scene. Destroying this one.");
-				DestroyImmediate(gameObject);
+				var warnMessage = "Found another UAP Accessibility Manager in the scene.";
+				if (instance.m_PersistAmongScenes)
+				{
+					warnMessage += " Destroying THIS one.";
+					Log(warnMessage);
+					
+					DestroyImmediate(gameObject);
+				}
+				else
+				{
+					warnMessage += " Destroying PREVIOUS one.";
+					Log(warnMessage);
+					
+					DestroyImmediate(instance.gameObject);
+					instance = this;
+					m_IsInitialized = false;
+					isDestroyed = false;
+				}
+				
 				return;
 			}
 
@@ -407,11 +423,7 @@ namespace UAP
 		void Start()
 		{
 			Initialize();
-			if (m_DontDestroyOnLoad)
-			{
-				DontDestroyOnLoad(gameObject);
-			}
-			
+			DontDestroyOnLoad(gameObject);
 			SceneManager.sceneLoaded += OnSceneLoaded; 
 		}
 
@@ -419,13 +431,18 @@ namespace UAP
 
 		void OnDestroy()
 		{
+			// if (instance == this)
+			// {
+			// 	isDestroyed = true;
+			// 	instance = null;
+			// }
+			//
+			// m_IsInitialized = false;
+			
 			if (instance == this)
-			{
 				isDestroyed = true;
-				instance = null;
-			}
-
-			m_IsInitialized = false;
+			
+			SceneManager.sceneLoaded -= OnSceneLoaded; 
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -646,15 +663,6 @@ namespace UAP
 			m_SuspendedActiveContainerIndex.Clear();
 			m_AudioQueue.Stop();
 			m_CurrentItem = null;
-
-			if (!m_DontDestroyOnLoad)
-			{
-				isDestroyed = false;
-				m_IsInitialized = false;
-				m_IsEnabled = true;
-
-				SceneManager.sceneLoaded -= OnSceneLoaded;
-			}
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1105,11 +1113,11 @@ namespace UAP
 			if (instance.m_Frame != null && instance.m_Frame.gameObject != null)
 				instance.m_Frame.gameObject.SetActive(false);
 
-			if (instance.m_FrameSelected != null 
-			    && instance.m_FrameSelected.gameObject != null 
-			    && instance.m_FrameSelected.gameObject.activeInHierarchy)
+			if (instance.m_FrameSelected != null)
 			{
-				instance.m_FrameSelected.gameObject.SetActive(false);
+				// Deselect the previous item, when use frame select
+				// (e.g Sprite, Button selected  
+				EventSystem.current.SetSelectedGameObject(null);
 			}
 		}
 
@@ -2492,11 +2500,10 @@ namespace UAP
 			// Windows applications might not want mouse swipes
 			if (m_WindowsUseMouseSwipes)
 	#endif
-			{
+			if (m_SwipeHorizontal || m_SwipeVertical) {
 				UpdateScrubDetection();
 				UpdateSwipeDetection();
 			}
-
 
 			// Detect if the user is touching the screen in any way. If so, stop
 			if (m_WindowsUseKeys && m_ContinuousReading && !m_ContinuousReading_WaitInputClear)

@@ -10,7 +10,7 @@ namespace UAP
 		static Texture m_LogoTexture = null;
 
 		// Enabling
-		private SerializedProperty m_DontDestroyOnLoad;
+		private SerializedProperty m_PersistAmongScenes;
 		private SerializedProperty m_DefaultState;
 		private SerializedProperty m_AutoTurnOnIfScreenReaderDetected;
 		private SerializedProperty m_SaveEnabledState;
@@ -68,7 +68,7 @@ namespace UAP
 		{
 			base.OnEnable();
 			
-			m_DontDestroyOnLoad = serializedObject.FindProperty("m_DontDestroyOnLoad");
+			m_PersistAmongScenes = serializedObject.FindProperty("m_PersistAmongScenes");
 			m_DefaultState = serializedObject.FindProperty("m_DefaultState");
 			m_AutoTurnOnIfScreenReaderDetected = serializedObject.FindProperty("m_AutoTurnOnIfScreenReaderDetected");
 			m_SaveEnabledState = serializedObject.FindProperty("m_SaveEnabledState");
@@ -171,7 +171,7 @@ namespace UAP
 			DrawSectionHeader("Turn On/Off Accessibility", true);
 			//EditorGUILayout.PropertyField(m_DefaultState, new GUIContent("Enabled on App Install", "Default: Off\nDetermines whether accessibility should be on or off when the user installs the app for the first time. If Auto Enable is on, this can usually be left off."), GUILayout.ExpandWidth(true));
 			//EditorGUILayout.PropertyField(m_AutoTurnOnIfScreenReaderDetected, new GUIContent("Auto-Enable if screen reader detected", "Default: On\nThe plugin can detect whether screen reader software is running on the target platform (TalkBack, VoiceOver, NVDA, etc) and turn on automatically if that is the case."));
-			m_DontDestroyOnLoad.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Persist that gameObject among scenes", "Determines whether this game object should be destroyed after load another Scene or not"), m_DontDestroyOnLoad.boolValue);
+			m_PersistAmongScenes.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Persist that gameObject among scenes", "Determines whether this gameObject should be persisted after load another Scene or not"), m_PersistAmongScenes.boolValue);
 			m_DefaultState.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Enabled after app install", "Determines whether accessibility should be on or off when the user installs the app for the first time. If Auto Enable is on, this can usually be left off."), m_DefaultState.boolValue);
 			if (m_DefaultState.boolValue)
 				DrawWarningBox("Are you sure?\nIf this is on then all users, including sighted ones, will start the app with accessibility mode enabled.");
