@@ -3,6 +3,7 @@
 
 #define IOS_USENATIVESWIPES
 
+using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -101,6 +102,12 @@ namespace UAP
 		public bool m_DebugOutput = false;
 		
 		// Mobile settings (only)
+		
+		/// <summary>
+		/// Enable/Disable Swipe from UAP (e.g using New Input System, Custom game mechanics...)
+		/// </summary>
+		public bool m_SwipeEnable = true;
+		public bool m_SwipeDetectUI = true;
 		public bool m_SwipeHorizontal = true;
 		public bool m_SwipeVertical;
 
@@ -2500,7 +2507,16 @@ namespace UAP
 			// Windows applications might not want mouse swipes
 			if (m_WindowsUseMouseSwipes)
 	#endif
-			if (m_SwipeHorizontal || m_SwipeVertical) {
+			if (m_SwipeDetectUI && !m_ActiveContainers.Any())
+			{
+				m_SwipeEnable = false;
+			}
+			else
+			{
+				m_SwipeEnable = true;
+			}
+			
+			if (m_SwipeEnable && (m_SwipeHorizontal || m_SwipeVertical)) {
 				UpdateScrubDetection();
 				UpdateSwipeDetection();
 			}

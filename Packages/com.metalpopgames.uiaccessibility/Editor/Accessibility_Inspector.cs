@@ -31,6 +31,8 @@ namespace UAP
 		private SerializedProperty m_FrameSelectedTemplate;
 		
 		// Mobile settings (only)
+		public SerializedProperty m_SwipeEnable;
+		public SerializedProperty m_SwipeDetectUI;
 		private SerializedProperty m_SwipeHorizontal;
 		private SerializedProperty m_SwipeVertical;
 
@@ -90,6 +92,8 @@ namespace UAP
 			
 			m_FrameSelectedTemplate = serializedObject.FindProperty("m_FrameSelectedTemplate");
 			
+			m_SwipeEnable = serializedObject.FindProperty("m_SwipeEnable");
+			m_SwipeDetectUI = serializedObject.FindProperty("m_SwipeDetectUI");
 			m_SwipeHorizontal = serializedObject.FindProperty("m_SwipeHorizontal");
 			m_SwipeVertical = serializedObject.FindProperty("m_SwipeVertical");
 
@@ -291,8 +295,14 @@ namespace UAP
                 EditorGUILayout.SelectableLabel("Mobile (only)", subSectionStyle);
                 
                 EditorGUILayout.LabelField(new GUIContent("Swipe", "Swipe UI directions settings"));
-                m_SwipeHorizontal.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Horizontal (default)", "Allow swipe horizontally among items (default)"), m_SwipeHorizontal.boolValue);
-                m_SwipeVertical.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Vertical", "Force swipe vertically among items"), m_SwipeVertical.boolValue);
+                m_SwipeEnable.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Enable", "Enable all swipe directions (Horizontal and Vertical)"), m_SwipeEnable.boolValue);
+                m_SwipeDetectUI.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Detect Active container (UI)", "Check if there is any 'AccessibleUIGroupRoot' gameObject (default)"), m_SwipeDetectUI.boolValue);
+
+                if (m_SwipeEnable.boolValue)
+                {
+	                m_SwipeHorizontal.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Horizontal (default)", "Allow swipe horizontally among items (default)"), m_SwipeHorizontal.boolValue);
+	                m_SwipeVertical.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Vertical", "Force swipe vertically among items"), m_SwipeVertical.boolValue);
+                }
 
 				EditorGUILayout.SelectableLabel("Speech delays", subSectionStyle);
 
