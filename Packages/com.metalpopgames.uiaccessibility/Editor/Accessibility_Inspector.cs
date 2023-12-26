@@ -19,6 +19,7 @@ namespace UAP
 		private SerializedProperty m_HandleUI;
 		private SerializedProperty m_HandleMagicGestures;
 		private SerializedProperty m_ExploreByTouch;
+		private SerializedProperty m_ExploreByTouchDetectUI;
 		private SerializedProperty m_MouseSwipes;
 		private SerializedProperty m_UseKeyboardKeys;
 		private SerializedProperty m_ReadDisabledInteractables;
@@ -83,6 +84,7 @@ namespace UAP
 			m_HandleUI = serializedObject.FindProperty("m_HandleUI");
 			m_HandleMagicGestures = serializedObject.FindProperty("m_HandleMagicGestures");
 			m_ExploreByTouch = serializedObject.FindProperty("m_ExploreByTouch");
+			m_ExploreByTouchDetectUI = serializedObject.FindProperty("m_ExploreByTouchDetectUI");
 			m_MouseSwipes = serializedObject.FindProperty("m_WindowsUseMouseSwipes");
 			m_UseKeyboardKeys = serializedObject.FindProperty("m_WindowsUseKeys");
 			m_ReadDisabledInteractables = serializedObject.FindProperty("m_ReadDisabledInteractables");
@@ -258,6 +260,7 @@ namespace UAP
 				if (!m_HandleUI.boolValue)
 					DrawErrorBox("Attention:\nIf you just want the plugin to stop handling swipes, use PauseAccessibility() instead.");
 				m_ExploreByTouch.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Explore By Touch", "If true (Default) the plugin reads out the UI element that is under the user's finger. If 'Handle UI' is not active, this setting will be ignored."), m_ExploreByTouch.boolValue);
+				m_ExploreByTouchDetectUI.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Explore By Touch Detect UI?", "If true (Default), check if there is any 'AccessibleUIGroupRoot' UI gameObject to reads element under user's finger (Tap + Hold)"), m_ExploreByTouchDetectUI.boolValue);
 				m_MouseSwipes.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Mouse Swiping", "Default is false.. If true, the plugin reads mouse swipes as finger swipes. Using the ALT key emulates two finger swipes.\nThis is very useful if developing a mobile application, but probably undesirable in a Desktop app."), m_MouseSwipes.boolValue);
 				EditorGUILayout.Separator();
 				
@@ -296,7 +299,7 @@ namespace UAP
                 
                 EditorGUILayout.LabelField(new GUIContent("Swipe", "Swipe UI directions settings"));
                 m_SwipeEnable.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Enable", "Enable all swipe directions (Horizontal and Vertical)"), m_SwipeEnable.boolValue);
-                m_SwipeDetectUI.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Detect Active container (UI)", "Check if there is any 'AccessibleUIGroupRoot' gameObject (default)"), m_SwipeDetectUI.boolValue);
+                m_SwipeDetectUI.boolValue = EditorGUILayout.ToggleLeft(new GUIContent("Detect UI", "Check if there is any 'AccessibleUIGroupRoot' UI gameObject (default)"), m_SwipeDetectUI.boolValue);
 
                 if (m_SwipeEnable.boolValue)
                 {

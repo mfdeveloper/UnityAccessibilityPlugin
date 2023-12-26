@@ -73,6 +73,12 @@ namespace UAP
 		/// As this is a standard accessibility feature on smart phones,
 		/// do not turn this off unless you have a good reason.</value>
 		public bool m_ExploreByTouch = true;
+		
+		/// <summary>
+		/// Enable/Disable <see cref="UpdateExploreByTouch2"/> when <b>tap + hold</b> on Mobile screens,
+		/// and there is at least one active <see cref="AccessibleUIGroupRoot"/>
+		/// </summary>
+		public bool m_ExploreByTouchDetectUI = true;
 		private float m_ExploreByTouchDelay = 0.75f;
 
 		/// <summary>
@@ -2592,8 +2598,11 @@ namespace UAP
 				}
 
 				// Explore by Touch is always on when the virtual keyboard is open
-				if ((m_ExploreByTouch && !m_CurrentElementHasSoleFocus) || UAP_VirtualKeyboard.IsOpen())
+				if ((m_ExploreByTouch && !m_CurrentElementHasSoleFocus) 
+				    || UAP_VirtualKeyboard.IsOpen())
+				{
 					UpdateExploreByTouch2();
+				}
 
 	#if UNITY_STANDALONE || UNITY_EDITOR || UNITY_WEBGL
 				if (m_WindowsUseKeys)
@@ -2707,7 +2716,7 @@ namespace UAP
 
 		private void UpdateExploreByTouch2()
 		{
-			if (!HandleUI())
+			if (!HandleUI() || (m_ExploreByTouchDetectUI && !m_ActiveContainers.Any()))
 				return;
 
 			// Cancel everything if there's 2 or more fingers on screen
