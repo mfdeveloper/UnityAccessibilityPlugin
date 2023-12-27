@@ -30,6 +30,7 @@ namespace UAP
 		
 		// UI general elements
 		private SerializedProperty m_FrameSelectedTemplate;
+		private SerializedProperty m_FramePadding;
 		
 		// Mobile settings (only)
 		public SerializedProperty m_SwipeEnable;
@@ -93,6 +94,7 @@ namespace UAP
 			m_AllowBuiltInVirtualKeyboard = serializedObject.FindProperty("m_AllowBuiltInVirtualKeyboard");
 			
 			m_FrameSelectedTemplate = serializedObject.FindProperty("m_FrameSelectedTemplate");
+			m_FramePadding = serializedObject.FindProperty("m_FramePadding");
 			
 			m_SwipeEnable = serializedObject.FindProperty("m_SwipeEnable");
 			m_SwipeDetectUI = serializedObject.FindProperty("m_SwipeDetectUI");
@@ -293,6 +295,7 @@ namespace UAP
                 
                 EditorGUILayout.SelectableLabel("UI Elements", subSectionStyle);
 
+                EditorGUILayout.ObjectField(m_FramePadding);
                 EditorGUILayout.ObjectField(m_FrameSelectedTemplate);
                 
                 EditorGUILayout.SelectableLabel("Mobile (only)", subSectionStyle);

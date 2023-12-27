@@ -6,8 +6,8 @@
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -217,6 +217,8 @@ namespace UAP
 		public GameObject m_FrameTemplate = null;
 		[Tooltip("Additional prefab to be instantiated and fill a highlighted item")]
 		public GameObject m_FrameSelectedTemplate = null;
+		[Tooltip("Frame outline highlight padding offset")]
+		public UAP_PaddingItem m_FramePadding = null;
 		public GameObject m_TouchBlocker = null;
 		public Text m_DebugOutputLabel = null;
 
@@ -444,14 +446,6 @@ namespace UAP
 
 		void OnDestroy()
 		{
-			// if (instance == this)
-			// {
-			// 	isDestroyed = true;
-			// 	instance = null;
-			// }
-			//
-			// m_IsInitialized = false;
-			
 			if (instance == this)
 				isDestroyed = true;
 			
@@ -459,6 +453,11 @@ namespace UAP
 		}
 
 		//////////////////////////////////////////////////////////////////////////
+
+		void OnValidate()
+		{
+			FetchElementsFrame();
+		}
 
 		static void Initialize()
 		{
@@ -534,6 +533,25 @@ namespace UAP
 
 		//////////////////////////////////////////////////////////////////////////
 
+		private void FetchElementsFrame()
+		{
+			if (m_Frame == null)
+			{
+				GameObject newFrame = Instantiate(m_FrameTemplate, m_TouchBlocker.transform);
+				m_Frame = (RectTransform) newFrame.transform;
+			}
+			
+			if (m_FramePadding == null)
+			{
+				m_FramePadding = m_Frame.GetComponent<UAP_PaddingItem>();
+			}
+			
+			if (m_FrameSelected == null && m_FrameSelectedTemplate != null)
+			{
+				m_FrameSelected = m_FrameSelectedTemplate.transform as RectTransform;
+			}
+		}
+		
 		/// <summary>
 		/// Loads the localization table
 		/// </summary>
@@ -911,18 +929,9 @@ namespace UAP
 
 		private static void UpdateElementFrame(ref AccessibleUIGroupRoot.Accessible_UIElement element)
 		{
-			if (instance.m_Frame == null)
-			{
-				GameObject newFrame = Instantiate(instance.m_FrameTemplate, instance.m_TouchBlocker.transform);
-				instance.m_Frame = newFrame.transform as RectTransform;
-			}
-			
-			if (instance.m_FrameSelected == null && instance.m_FrameSelectedTemplate != null)
-			{
-				instance.m_FrameSelected = instance.m_FrameSelectedTemplate.transform as RectTransform;
-			}
+			instance.FetchElementsFrame();
 
-	#if ACCESS_NGUI
+#if ACCESS_NGUI
 			if (instance.m_NGUIItemFrame == null)
 			{
 				InitNGUI();
@@ -970,10 +979,18 @@ namespace UAP
 				if (instance.m_Frame != null)
 				{
 					instance.m_Frame.gameObject.SetActive(true);
-					instance.m_Frame.transform.SetParent(instance.m_TouchBlocker.transform);
+					instance.m_Frame.SetParent(instance.m_TouchBlocker.transform);
 					instance.m_Frame.position = screenPos;
-					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, base3DElement.GetPixelHeight());
-					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, base3DElement.GetPixelWidth());
+					
+					(float height, float width) base3DElementSize = (base3DElement.GetPixelHeight(), base3DElement.GetPixelWidth());
+					if (instance.m_FramePadding != null)
+					{
+						base3DElementSize.height += instance.m_FramePadding.Padding.top > 0 ? instance.m_FramePadding.Padding.top : instance.m_FramePadding.Padding.bottom;
+						base3DElementSize.width += instance.m_FramePadding.Padding.right > 0 ? instance.m_FramePadding.Padding.right : instance.m_FramePadding.Padding.left;
+					}
+					
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, base3DElementSize.height);
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, base3DElementSize.width);
 				}
 				
 	#endif
@@ -995,15 +1012,23 @@ namespace UAP
 
 				//if (owner.renderMode != RenderMode.ScreenSpaceOverlay && owner.worldCamera != null)
 				{
-					if (instance.m_Frame.transform.parent != rect.transform)
+					if (instance.m_Frame.parent != rect.transform)
 					{
-						instance.m_Frame.transform.SetParent(rect.transform, false);
+						instance.m_Frame.SetParent(rect.transform, false);
 						//instance.m_Frame.transform.localPosition = Vector3.zero;
-						(instance.m_Frame.transform as RectTransform).anchoredPosition3D = Vector3.zero;
-						instance.m_Frame.transform.localScale = Vector3.one;
+						instance.m_Frame.anchoredPosition3D = Vector3.zero;
+						instance.m_Frame.localScale = Vector3.one;
 					}
-					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rect.rect.height);
-					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rect.rect.width);
+
+					var rectSize = (rect.rect.height, rect.rect.width);
+					if (instance.m_FramePadding != null)
+					{
+						rectSize.height += instance.m_FramePadding.Padding.top > 0 ? instance.m_FramePadding.Padding.top : instance.m_FramePadding.Padding.bottom;
+						rectSize.width += instance.m_FramePadding.Padding.right > 0 ? instance.m_FramePadding.Padding.right : instance.m_FramePadding.Padding.left;
+					}
+					
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, rectSize.height);
+					instance.m_Frame.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rectSize.width);
 				}
 
 				if (instance.m_FrameSelected != null && element.m_Object.IsInteractable())
