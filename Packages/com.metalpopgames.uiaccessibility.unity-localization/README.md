@@ -29,7 +29,7 @@ Allows you to use localized tables and keys to localize texts on accessible UI e
 
 ## Installation
 
-## OpenUPM
+## OpenUPM package
 
 Install the [OpenUPM](https://openupm.com) CLI and add the [com.metalpopgames.uiaccessibility.unity-localization](https://openupm.com/packages/com.metalpopgames.uiaccessibility.unity-localization) package
 
@@ -55,7 +55,9 @@ openupm add com.metalpopgames.uiaccessibility.unity-localization
 
 ```
 
-Or alternatively, merge the snippet below to [Packages/manifest.json](https://docs.unity3d.com/Manual/upm-manifestPrj.html) manually
+Follow the installation guide from: [openupm/com.metalpopgames.uiaccessibility.unity-localization](https://openupm.com/packages/com.metalpopgames.uiaccessibility.unity-localization)
+
+Alternatively, merge the snippet below to [Packages/manifest.json](https://docs.unity3d.com/Manual/upm-manifestPrj.html) manually
 
 ```jsonc
 {
@@ -79,7 +81,9 @@ Or alternatively, merge the snippet below to [Packages/manifest.json](https://do
 
 ## Github package
 
-1. Add a **`$HOME/.upmconfig.toml`** file with the TOKEN to authenticate on registry
+1. Generate an **access token** on your Github account, following the guide: [Creating a personal access token (classic)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic).
+
+2. Add a **`$HOME/.upmconfig.toml`** file with the TOKEN to authenticate on registry
 
     ```toml
     [npmAuth."https://npm.pkg.github.com/@mfdeveloper"]
@@ -90,9 +94,11 @@ Or alternatively, merge the snippet below to [Packages/manifest.json](https://do
     alwaysAuth = true
     ```
 
-    > **WARNING:** _GitHub/Gitlab_ Packages registry always requires authentication. For **_private_** and **_public_** packages.
+    > **WARNING:** _GitHub/Gitlab_ Packages registry always requires authentication. For **_private_** and **_public_** packages. If you don't have a Github account, or won't create a TOKEN, try use the [openupm](#openupm-package) package above.
 
-2. Configure the scope **registry** and **dependency** in your Unity project `Packages/manifest.json`
+    ![Github package authentication](./Images/github-package-auth-require-token.jpg)
+
+3. Configure the scope **registry** and **dependency** in your Unity project `Packages/manifest.json`
 
     ```jsonc
     {
