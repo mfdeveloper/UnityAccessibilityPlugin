@@ -297,3 +297,7 @@ dist
 
 node_modules.meta
 package-lock.json.meta
+
+# Unity untracked dirs (with ~)
+Samples~/
+Documentation~/

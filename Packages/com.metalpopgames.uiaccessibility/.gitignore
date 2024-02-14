@@ -301,3 +301,14 @@ InitTestScene*
 # Node npm files
 node_modules.meta
 package-lock.json.meta
+
+# Unity untracked dirs (with ~)
+Samples~/
+Documentation~/
+
+# Bash/Shell script copied dirs and files
+Images/
+Images.meta
+LICENSE
+LICENSE.meta
+README.*
