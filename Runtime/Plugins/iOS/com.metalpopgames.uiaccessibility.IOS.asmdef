@@ -1,0 +1,16 @@
+{
+    "name": "com.metalpopgames.uiaccessibility.IOS",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [
+        "iOS"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
