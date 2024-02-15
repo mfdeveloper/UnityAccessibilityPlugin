@@ -3,31 +3,43 @@ on:
   push:
     branches:
     - upm-package
+  repository_dispatch:
+    types: [on-demand-test]
 env:
-    PKG_ROOT: ./
-    PKG_BRANCH: upm
+  # PS: You can define github action variables in a repository, without modify this file
+  # from: https://github.com/[profile]/[repository]/settings/variables/actions
+  PKG_BRANCH: upm
+  PKG_NAME: com.mfdeveloper.unitypatterns
+  PKG_ROOT: '.'
+  EXCLUDE_REMOVE_FILES: '!(Packages|.github|.git|README.md|README.md.meta|LICENSE|LICENSE.meta|Images|Images.meta|.|..)'
 jobs:
   split-upm:
-    name: Create upm branch (force)
+    name: Create upm package branch (force)
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: split upm branch
-      run: |
-        git checkout -b "$PKG_BRANCH"
-    - name: create samples~ folder
-      run: |
-        if [[ -d "Samples" ]]; then
-          git mv Samples Samples~
-          rm -f Samples.meta
-        fi
-        if [[ -d "Documentation" ]]; then
-          git mv Documentation Documentation~
-          rm -f Documentation.meta
-        fi
-        git config --global user.name 'github-bot'
-        git config --global user.email 'github-bot@users.noreply.github.com'
-        git commit -am "fix: Samples => Samples~ and Documentation => Documentation~"
-        git push -f -u origin "$PKG_BRANCH"
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set output git tag and commit message
+        id: vars
+        run: ./.github/scripts/functions.sh githubActionsVariables
+      - name: Check output git variables
+        env:
+          LAST_RELEASE_TAG: ${{ steps.vars.outputs.TAG }}
+          COMMIT_MESSAGE: ${{ steps.vars.outputs.COMMIT_MESSAGE }}
+        run: |
+          echo "[LAST TAG] $LAST_RELEASE_TAG"
+          echo "[COMMIT MESSAGE] $COMMIT_MESSAGE"
+      - name: Checkout orphan [${{ env.PKG_BRANCH }}] branch
+        run: |
+          git checkout --orphan "$PKG_BRANCH"
+          shopt -s extglob dotglob
+          rm -rf $EXCLUDE_REMOVE_FILES
+          ls -la ./
+      - name: Move ./Packages content to root
+        run: ./.github/scripts/functions.sh movePackagesFolder
+      - name: Create Samples~ and Documentation~ folders
+        run: ./.github/scripts/functions.sh push
+        env:
+          LAST_RELEASE_TAG: ${{ steps.vars.outputs.TAG }}
+          COMMIT_MESSAGE: ${{ steps.vars.outputs.COMMIT_MESSAGE }}

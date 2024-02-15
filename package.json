@@ -1,7 +1,7 @@
 {
 	"name": "com.metalpopgames.uiaccessibility.unity-localization",
 	"displayName": "UI Accessibility Plugin (UAP): Unity Localization",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"unity": "2017.4",
 	"description": "The UI Accessibility Plugin (UAP) integration with Unity Localization official UPM package, to translate keys for screen readers",
     "documentationUrl": "http://www.metalpopgames.com/assetstore/accessibility/doc/HowToGuides.html#Localization",
