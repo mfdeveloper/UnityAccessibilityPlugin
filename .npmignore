@@ -1,0 +1,20 @@
+# ---------------------
+# "npm publish" ignore
+# ---------------------
+
+# Native plugin projects (Android, IOS, WebGL...)
+MobileProjects~
+MobileProjects/*
+NativeProjects~
+NativeProjects/*
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Node npm files
+node_modules.meta
+package-lock.json.meta
